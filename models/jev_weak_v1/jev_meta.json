@@ -1,0 +1,40 @@
+{
+  "model_name": "jev/decision",
+  "architecture": "TF-IDF(word 1-2g + char_wb 3-5g) + LogisticRegression",
+  "gate_threshold": 0.4,
+  "train_samples": 2148,
+  "test_samples": 692,
+  "llm_distill_teacher_used": false,
+  "categories": [
+    "CRYPTO",
+    "MACRO",
+    "POLITICS_REG",
+    "TECH_AI",
+    "TRADFI"
+  ],
+  "subcategories": [
+    "altcoins_ecosystem",
+    "banking_credit",
+    "btc_eth_majors",
+    "commodities_gold_oil",
+    "earnings_guidance",
+    "enforcement_lawsuit",
+    "equities_index",
+    "etf_institutional_flows",
+    "exchange_listing",
+    "fed_rates",
+    "geopolitics_tariffs",
+    "hack_security",
+    "inflation_cpi",
+    "leadership_governance",
+    "liquidation_solvency",
+    "major_financing",
+    "political_statement",
+    "product_launch",
+    "protocol_milestone",
+    "regulation_policy",
+    "stablecoins_onchain",
+    "usd_treasury_liquidity",
+    "valuation_capex"
+  ]
+}

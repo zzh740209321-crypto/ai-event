@@ -1,0 +1,719 @@
+{
+  "date": "2026-11-25",
+  "timezone": "Asia/Kuala_Lumpur (UTC+8)",
+  "generated_at_myt": "2026-11-25 08:57 UTC+8",
+  "all_complete": false,
+  "anomalies": [
+    {
+      "id": "2026-11-25_BNB/USDT",
+      "date": "2026-11-25",
+      "symbol": "BNB/USDT",
+      "asset_class": "crypto",
+      "daily_ret_pct": 0.253,
+      "daily_z": 0.1,
+      "daily_std": 0.02619,
+      "day_complete": false,
+      "start_px": 544.75,
+      "end_px": 546.13,
+      "move_dir": "UP",
+      "primary_window": {
+        "interval": "15m",
+        "jump_start_utc": "2026-11-24T17:00:00Z",
+        "jump_start_myt": "2026-11-25 01:00 UTC+8",
+        "window_end_utc": "2026-11-24T17:00:00Z",
+        "window_end_myt": "2026-11-25 01:00 UTC+8",
+        "peak_bar_myt": "2026-11-25 01:00 UTC+8",
+        "n_bars": 1,
+        "peak_ret_pct": 0.743,
+        "peak_ret_z": 2.67,
+        "peak_vol_z": 1.33,
+        "cum_ret_pct": 0.743,
+        "direction": "UP"
+      },
+      "other_windows": [],
+      "window_cum_ret_pct": 0.743,
+      "candidates": [
+        {
+          "event_id": "evt_9a281fe070be",
+          "headline": "Jensen Huang is back, but Nvidia still has to deal with his baggage",
+          "category": "TRADFI",
+          "subcategory": "equities_index",
+          "direction": "BULLISH",
+          "impact_score": 72.9,
+          "target_symbol": "NVDA",
+          "retrieval_layer": "DIRECT",
+          "published_at_myt": "2026-11-24 23:40 UTC+8",
+          "published_at_utc": "2026-11-24T15:40:00Z",
+          "source_count": 1,
+          "unique_domains": [
+            "apnews.com"
+          ],
+          "sources": [
+            {
+              "name": "AP News",
+              "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQQUVQVndZcFVCS0N6M3plQS16cWctMi1ia2s3S0FqdDZoQzZwS3BZX3FZQUF3ZzZMMXdyLVd4WDM3cE9wMGMwd0RZSDJLekF4SUJaZ2VsQ1R3bXV1c0JhZWh6QnBkdERwNUo4VGQybHdGSkRSckZiTFAyMHM1aXlWYVI3TzF4OXR3WTYyZTJTaW9kaC1UTmZYbTRqa3djc2dGb19ZTG0xbw?oc=5",
+              "domain": "apnews.com"
+            }
+          ],
+          "verification_status": "SINGLE_TIER1_REPORTED",
+          "verification_label": "单一权威（未交叉核实）",
+          "hours_vs_jump": -1.33,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.6412,
+          "heat": 0.4885,
+          "relevance": 0.72,
+          "dir_align": 1.0,
+          "attr_score": 0.7059
+        },
+        {
+          "event_id": "evt_2e0a8f987b8e",
+          "headline": "OpenAI’s IPO Countdown Clock Is Ticking",
+          "category": "TRADFI",
+          "subcategory": "major_financing",
+          "direction": "NEUTRAL",
+          "impact_score": 63.0,
+          "target_symbol": "BTC/USDT",
+          "retrieval_layer": "CROSS_MARKET",
+          "published_at_myt": "2026-11-25 01:00 UTC+8",
+          "published_at_utc": "2026-11-24T17:00:00Z",
+          "source_count": 1,
+          "unique_domains": [
+            "wsj.com"
+          ],
+          "sources": [
+            {
+              "name": "WSJ",
+              "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOV3Qxb0R3X0EydVhiOG9yX1ZCczV1eVBZaGdvYVlFWGdTNjBNS3dEYjI1dzZOS2lMQW1tTEZDc1h5cFNtWTFHcUFnSWxzcFJIcDNvLVdNOEZzQnRhNnNlYi1xMFJFUUI5Z3Z0b2xVTHB2NXBlV2RoUGpIVDJQbzZtNQ?oc=5",
+              "domain": "wsj.com"
+            }
+          ],
+          "verification_status": "SINGLE_TIER1_REPORTED",
+          "verification_label": "单一权威（未交叉核实）",
+          "hours_vs_jump": 0.0,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 1.0,
+          "heat": 0.4885,
+          "relevance": 0.72,
+          "dir_align": 0.4,
+          "attr_score": 0.6988
+        },
+        {
+          "event_id": "evt_d84a0713360d",
+          "headline": "'AI trade never died': Traders see room for market recovery, but bitcoin's participation is another story",
+          "category": "CRYPTO",
+          "subcategory": "btc_eth_majors",
+          "direction": "BULLISH",
+          "impact_score": 71.0,
+          "target_symbol": "BTC/USDT",
+          "retrieval_layer": "DIRECT",
+          "published_at_myt": "2026-11-25 00:00 UTC+8",
+          "published_at_utc": "2026-11-24T16:00:25Z",
+          "source_count": 2,
+          "unique_domains": [
+            "coindesk.com"
+          ],
+          "sources": [
+            {
+              "name": "CoinDesk",
+              "url": "https://www.coindesk.com/markets/2026/11/24/ai-trade-never-died-traders-see-room-for-market-recovery-despite-bitcoin-s-weakness",
+              "domain": "coindesk.com"
+            },
+            {
+              "name": "CoinDesk",
+              "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPS3pSWGt6Ym5aVnloZm15X1R4M2ZMbkhGUFpMUXFZZEg3TmtOTDIzZHBVdFh5bFRxNGFhRTV3eV8yajNYQmVXQ21NLXBRNi1jWWpEMUg4NkV3VXgzSWptMU9vMDVNUnhxTnRQb2t3UUozZi1TWTEtZmxXSnZtdE92emNYcnZMdVpIOG1TX25fRzhRT0oxbXlSdFFLMnEzaUdSUFAxQUV2OEZDbDVOUFRScDVxQzlJblZUb0JPNjJqUTZsZmotU2c?oc=5",
+              "domain": "coindesk.com"
+            }
+          ],
+          "verification_status": "SINGLE_TIER1_REPORTED",
+          "verification_label": "单一权威（未交叉核实）",
+          "hours_vs_jump": -0.99,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.7182,
+          "heat": 0.5678,
+          "relevance": 0.32,
+          "dir_align": 1.0,
+          "attr_score": 0.6761
+        },
+        {
+          "event_id": "evt_0985bdb6b41d",
+          "headline": "Top Performing Leveraged/Inverse ETFs: 11/22/2026",
+          "category": "TRADFI",
+          "subcategory": "etf_institutional_flows",
+          "direction": "NEUTRAL",
+          "impact_score": 50.7,
+          "target_symbol": "BTC/USDT",
+          "retrieval_layer": "CROSS_MARKET",
+          "published_at_myt": "2026-11-25 00:59 UTC+8",
+          "published_at_utc": "2026-11-24T16:59:27Z",
+          "source_count": 1,
+          "unique_domains": [
+            "etfdb.com"
+          ],
+          "sources": [
+            {
+              "name": "ETF Database",
+              "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNTDcyeU5DckdsUjZuVXdBbHU1aEV2WjdaVmJaR0hKLWo0NHp5QXpKTGYzLVlQZEtqRUVkN0hLTGxIbV85ZWpCQmN5cm9CQzhnVUFpMGdQM3NMODEtVlVIYURCNVpDVl9uR2NrX2ZSc0ZIeGVYc2VmZUpnZWdTcGZFakktaUVESDN3RUYtUw?oc=5",
+              "domain": "etfdb.com"
+            }
+          ],
+          "verification_status": "UNVERIFIED_OR_RUMOR",
+          "verification_label": "单源未核实",
+          "hours_vs_jump": -0.01,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.9969,
+          "heat": 0.4885,
+          "relevance": 0.72,
+          "dir_align": 0.4,
+          "attr_score": 0.6671
+        },
+        {
+          "event_id": "evt_376a9d2635c6",
+          "headline": "Neuberger Berman’s HINC fund brings high-yield credit to Aave’s institutional lending platform",
+          "category": "TRADFI",
+          "subcategory": "etf_institutional_flows",
+          "direction": "BULLISH",
+          "impact_score": 74.0,
+          "target_symbol": "BTC/USDT",
+          "retrieval_layer": "CROSS_MARKET",
+          "published_at_myt": "2026-11-24 22:00 UTC+8",
+          "published_at_utc": "2026-11-24T14:00:00Z",
+          "source_count": 1,
+          "unique_domains": [
+            "theblock.co"
+          ],
+          "sources": [
+            {
+              "name": "The Block",
+              "url": "https://www.theblock.co/news/markets/2026-11-24-neuberger-berman-tokenized-hinc-fund-aave-horizon-collateral-445391",
+              "domain": "theblock.co"
+            }
+          ],
+          "verification_status": "SINGLE_TIER1_REPORTED",
+          "verification_label": "单一权威（未交叉核实）",
+          "hours_vs_jump": -3.0,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.3679,
+          "heat": 0.4885,
+          "relevance": 0.72,
+          "dir_align": 1.0,
+          "attr_score": 0.6266
+        },
+        {
+          "event_id": "evt_01b6382cedb6",
+          "headline": "Europol operation involving Binance, Coinbase and Chainalysis traces more than $28.5 million in crypto behind illegal streaming services",
+          "category": "CRYPTO",
+          "subcategory": "exchange_listing",
+          "direction": "NEUTRAL",
+          "impact_score": 64.2,
+          "target_symbol": "BTC/USDT",
+          "retrieval_layer": "CROSS_MARKET",
+          "published_at_myt": "2026-11-25 00:45 UTC+8",
+          "published_at_utc": "2026-11-24T16:45:33Z",
+          "source_count": 1,
+          "unique_domains": [
+            "theblock.co"
+          ],
+          "sources": [
+            {
+              "name": "The Block",
+              "url": "https://www.theblock.co/news/regulation/2026-11-24-europol-operation-binance-coinbase-chainalysis-traces-28-5-million-crypto-illegal-streaming-services-446019",
+              "domain": "theblock.co"
+            }
+          ],
+          "verification_status": "SINGLE_TIER1_REPORTED",
+          "verification_label": "单一权威（未交叉核实）",
+          "hours_vs_jump": -0.24,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.9229,
+          "heat": 0.4885,
+          "relevance": 0.32,
+          "dir_align": 0.4,
+          "attr_score": 0.6186
+        },
+        {
+          "event_id": "evt_9ba612e2ef29",
+          "headline": "Jensen Huang to face DC grilling the same day Nvidia releases new products at GTC",
+          "category": "TRADFI",
+          "subcategory": "equities_index",
+          "direction": "NEUTRAL",
+          "impact_score": 70.0,
+          "target_symbol": "NVDA",
+          "retrieval_layer": "DIRECT",
+          "published_at_myt": "2026-11-24 23:44 UTC+8",
+          "published_at_utc": "2026-11-24T15:44:41Z",
+          "source_count": 1,
+          "unique_domains": [
+            "cnbc.com"
+          ],
+          "sources": [
+            {
+              "name": "CNBC",
+              "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE53TFk0ZFZoVm1EaVMyQTN4SVlDWVR3aFJ5cVdtU3IzMlAxZ0dTS3BiUXA1WHF6QnNYYjBfRVJSSnpIT0FsV0lkUXhkRkw1cjV6NllsOFlRcU5PZnd3YjVjLXl2TWk3MXpkTVJ6MTdxZWNFVVYtQWptVNIBfkFVX3lxTE4xS1RzSlRwM2w0WVF3MGlYT3ZiU1BhYmxLdmE2a2ZYT2lfVzBIUGtzU3hac2FYMHdxbHBBRG1RUjBRWXNLaHBUdHNSZkNPM0pQdnBlcFdWT3NXUjFnd0tzV1g3VDg5dUtpNjRmMkJZVzhBbnhsM19EVEJKVU9yZw?oc=5",
+              "domain": "cnbc.com"
+            }
+          ],
+          "verification_status": "SINGLE_TIER1_REPORTED",
+          "verification_label": "单一权威（未交叉核实）",
+          "hours_vs_jump": -1.26,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.6581,
+          "heat": 0.4885,
+          "relevance": 0.72,
+          "dir_align": 0.4,
+          "attr_score": 0.6137
+        },
+        {
+          "event_id": "evt_a8ea68621519",
+          "headline": "Bitcoin’s rebound from $55,000 meets a second test near $65,000",
+          "category": "CRYPTO",
+          "subcategory": "btc_eth_majors",
+          "direction": "BULLISH",
+          "impact_score": 52.2,
+          "target_symbol": "BTC/USDT",
+          "retrieval_layer": "DIRECT",
+          "published_at_myt": "2026-11-24 23:57 UTC+8",
+          "published_at_utc": "2026-11-24T15:57:17Z",
+          "source_count": 1,
+          "unique_domains": [
+            "kitco.com"
+          ],
+          "sources": [
+            {
+              "name": "Kitco",
+              "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPVTZPcFZuUVVZQWlnd28tbzZxX3dqVWJQNlN4QUROX0duRU5IVWhudU5qSjNkWjhGelBkVVVBcXl3d291TzhZbzRnT2JPVElfV3Jrck1yN25UMVp0SXJmNE9yUS11d1BRM2RmNUUxSjNYZGtlZ3pMbUpQbFZxbzlPUW10MzU2ZE9YYmFhTktNdHd2TTVFTGVn?oc=5",
+              "domain": "kitco.com"
+            }
+          ],
+          "verification_status": "UNVERIFIED_OR_RUMOR",
+          "verification_label": "单源未核实",
+          "hours_vs_jump": -1.05,
+          "timing": "事前或同步",
+          "ex_post": false,
+          "time_prox": 0.7058,
+          "heat": 0.4885,
+          "relevance": 0.32,
+          "dir_align": 1.0,
+          "attr_score": 0.6135
+        }
+      ],
+      "magnitude": 2.67,
+      "session_note": null,
+      "attribution_zh": "未找到明确新闻，可能为流动性/清算/技术面",
+      "confidence": 0.1,
+      "verdict": "NO_CLEAR_NEWS",
+      "llm_status": "OK",
+      "prompt_tokens": 824,
+      "completion_tokens": 50,
+      "llm_error": ""
+    }
+  ],
+  "common_factors": [],
+  "news_hotlist": [
+    {
+      "event_id": "evt_242fcbd2f7f0",
+      "headline": "Huang Tells Staff He Is in Therapy, Apologizes in Nvidia Town Hall",
+      "category": "TECH_AI",
+      "subcategory": "leadership_governance",
+      "hot_score": 79.024,
+      "impact_score": 87.1,
+      "heat": 0.9258,
+      "novelty": 1.0,
+      "credibility": 0.98,
+      "published_at_myt": "2026-11-25 04:09 UTC+8",
+      "verification_label": "多源确认",
+      "verification_status": "MULTI_SOURCE_CONFIRMED",
+      "sources": [
+        {
+          "name": "WSJ",
+          "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNVzhmUDdZT0JqSVhGX0lxazBhcUFaM2pIS2I0UHJOMVVUa1JOWFhVeGVrREVocmdyRWhQVzlGOEVpWDJXSGZxU1hkcEJ1TElmbXFXZXZnZVk5RmdBeEl2WGljdG1GTFl4SHVraWZfdjRsVFcxMWlBUWpCM2JaSHBhZ2wxRV9hSHk1R0hQcmRhNzAwcmEtYmc4bUtpOU9jbG10?oc=5",
+          "domain": "wsj.com"
+        },
+        {
+          "name": "The New York Times",
+          "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQNV9IMGNKck1YZzRSOHNiSVJRQ05tMkJmWmYycGxzcWZJSWtza0UyR3lDN0hVNjdGYVRpcDFfMlhmSnplWENQSjRwV1Z4RGQzWWFHZXd4dVE5b0x4XzV5bjNjVDJzWXUybURjejU3ZzdlRmltU25BZlNKRmZHTGRvaTY2eVdNUlU1d1E?oc=5",
+          "domain": "nytimes.com"
+        },
+        {
+          "name": "Yahoo Finance",
+          "url": "https://www.ibtimes.com/jensen-huang-daily-therapy-after-misconduct-scandal-3810157?.tsrc=rss",
+          "domain": "ibtimes.com"
+        }
+      ],
+      "related_symbols": [
+        "NVDA"
+      ],
+      "price_reaction_display": {
+        "NVDA": "24h 窗口未结束（锚定 155.47，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_b663af8f9016",
+      "headline": "Watch Bitcoin Sinks Below $60,000 Amid ETF Outflows",
+      "category": "TRADFI",
+      "subcategory": "etf_institutional_flows",
+      "hot_score": 61.025,
+      "impact_score": 79.5,
+      "heat": 0.7996,
+      "novelty": 1.0,
+      "credibility": 0.96,
+      "published_at_myt": "2026-11-25 04:15 UTC+8",
+      "verification_label": "单一权威（未交叉核实）",
+      "verification_status": "SINGLE_TIER1_REPORTED",
+      "sources": [
+        {
+          "name": "Bloomberg.com",
+          "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNUXZEMXM0LXU0dGd5TXRQanYwTTZwZmtTNzFYc0ZrTTFEOVZKUGozbmtmQTNPNXpnSXNxaU0xM3RNVEthSXVTU3I2cExGQVEyMG85ZEZjNGdZS2RuUHNuQkFiSXRLVXdmel9NT09HTXJOalc4VGg3UFVCTnl4bFBNZlowSnJWTlJxSTlZQTYwUTVZMWRNdUgtYUk5LWVucDZD?oc=5",
+          "domain": "bloomberg.com"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxPLTNtZEtTS2JrekFZdEt1TTVjWEJIMG5zOUVRdUpVYTFfblo4MkhMNlRxbzRINzVXU3doTi0yNkM5amZKQnpva3VObXBNdFVsWGR0T3lYNy02ZjlVWk41VEE5Wnh0MU5qeHh5MzlZVFJUUWg4cmNXcHFZVXE5dGtoR0VHRTlGTGtKWFNVVFB4OFdNdlA0TTVhc2JGTTBma2RXR0JlMEhLOS1pcFlOQldpcmVlRkNWLXF2Rmx1UDA0LVdLY19pdjhSTHNrX0U1bHNLTjhwQ2FiU05KZ2tVVXRUUVJhY3lGazEyTU01bXNOclg4d2s?oc=5",
+          "domain": "fool.com"
+        },
+        {
+          "name": "Yahoo Finance",
+          "url": "https://www.fool.com/coverage/stock-market-today/2026/11/24/crypto-market-today-nov-24-bitcoin-falls-below-usd60-000-as-etf-outflows-hit-a-record-usd4-7-billion/?.tsrc=rss",
+          "domain": "fool.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59893.62，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_349ad32914f9",
+      "headline": "Bitcoin miner CleanSpark swings to $987 million annual loss as BTC production declines",
+      "category": "CRYPTO",
+      "subcategory": "btc_eth_majors",
+      "hot_score": 50.435,
+      "impact_score": 72.5,
+      "heat": 0.7996,
+      "novelty": 1.0,
+      "credibility": 0.87,
+      "published_at_myt": "2026-11-25 06:10 UTC+8",
+      "verification_label": "单一权威（未交叉核实）",
+      "verification_status": "SINGLE_TIER1_REPORTED",
+      "sources": [
+        {
+          "name": "The Block",
+          "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxONk8zWlpmWUpHcDZ4MEU0dHJsMHRRZUJzTms2QnRhMU0yemQxRUpnUk9kZldNOUdFNmZHcTNTT3NGeHFBQkRJVkdLV2tOVVkzaXFUNkU5ZUJFTGhjUmtlTFNWSnhtWVpoQXo4R2hoR09NOWI1MTZHSVdzSERaUUQxR3dxWkprY1RiWUdMbnpXQzdVbWNMRWpmXzRmcS1MY29RSV9qYkxsM1BkYUNGOXpRcFNCVVVYT3k2c1JIRUlYbHB5eEtxN0hhMTc0WXFDdFdI?oc=5",
+          "domain": "theblock.co"
+        },
+        {
+          "name": "The Block",
+          "url": "https://www.theblock.co/news/business/2026-11-24-bitcoin-miner-cleanspark-swings-987-million-annual-loss-btc-production-declines-446061",
+          "domain": "theblock.co"
+        },
+        {
+          "name": "Traders Union",
+          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNcmJfZUxxOGptUFVENWVnM2tkaEpvUEY4SU5tVnRtNGtGd2c0Rk90SWM4TFBuSEU2YWNCMjBkbXBKN1NpYmxmbk5IcTdJTm43STBDZFVNMXU1anNFYUNCTnl2T3RrbmlpLVZtRml3ZEQzLXBEYWhQaGRDdEtvTHlXRE50OEFKdm03Z09aT0FkbDYwWTl0UmRtVnplM1pBMkpTemtj?oc=5",
+          "domain": "tradersunion.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59832.0，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_98439b8ae0c9",
+      "headline": "CleanSpark Returns to Q4 Profit on Bitcoin Gains, Revenue Falls 46% During AI Shift",
+      "category": "TECH_AI",
+      "subcategory": "earnings_guidance",
+      "hot_score": 48.381,
+      "impact_score": 84.0,
+      "heat": 0.748,
+      "novelty": 1.0,
+      "credibility": 0.77,
+      "published_at_myt": "2026-11-25 05:53 UTC+8",
+      "verification_label": "多源确认",
+      "verification_status": "MULTI_SOURCE_CONFIRMED",
+      "sources": [
+        {
+          "name": "Yahoo Finance",
+          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQYkdybW1YQUI4V2lkNzRXU2pGSndpbEdBd3lrN3RLbk00SEFmWWlsY2VWaWZvQWhYSFhEWFptVjNXZUpYczZaV0hiYW9lUlNPWllBWWl2d0pHRUdZNlJSUU1HbVFGZzJCR0pBOHRKanNXZlJQMWMtWjVCa3pocV9tYlVsUzBXTExGZEtsXzI5eU9DVTloU0ItbjNuLUJFbXRmSklB?oc=5",
+          "domain": "finance.yahoo.com"
+        },
+        {
+          "name": "Yahoo Finance",
+          "url": "https://www.cryptoprowl.com/releases/cleanspark-returns-to-q4-profit-on-bitcoin-gains-revenue-falls-46-during-ai-shift-8056?.tsrc=rss",
+          "domain": "cryptoprowl.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59986.01，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_a8f0af6ff79f",
+      "headline": "Nasdaq Resumes Selloff as Nvidia, Anthropic Shares Slump",
+      "category": "TECH_AI",
+      "subcategory": "valuation_capex",
+      "hot_score": 46.686,
+      "impact_score": 65.7,
+      "heat": 0.748,
+      "novelty": 1.0,
+      "credibility": 0.95,
+      "published_at_myt": "2026-11-25 03:32 UTC+8",
+      "verification_label": "单一权威（未交叉核实）",
+      "verification_status": "SINGLE_TIER1_REPORTED",
+      "sources": [
+        {
+          "name": "WSJ",
+          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOeEpzR3NLc2czaVQ0bUV4SzB6NTk3MjJtbWFoWXJVcjZxcDFNS1NYc1VSYkhDMTRXTUpHVktRQUQxb0c1VkVuTlBQOWF6TzA4N2pxZzdlSy1BczA3azhsX0N1dk9Td0R0d210ZVBfOGh3cXB1SkE1Yi1ZTnpKM0pFcnduQzlaV18wMGhlMUNfVW5OaVdPWGp6dDRLa2JMQQ?oc=5",
+          "domain": "wsj.com"
+        },
+        {
+          "name": "AFP.com",
+          "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPSE1zQTFBMlhfaDYyWEV3YzMwZC1kdkJfUXpaZTUzY2R0ZmlKMVRUMmJlRkdIUzh6bVlyc09NSDl6bW1VQTlyWW94a3V6N21XSjFRRmpCeEZXUWZSS3p6T082NFNQS295MXV5NTJEMXB4UUJ1cXpCbnRmOUVPd0lOM3ZR?oc=5",
+          "domain": "afp.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59781.39，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_f1cf2cb5f137",
+      "headline": "Anthropic falls below its $83 IPO price on its fourth day of trading, faster than SpaceX",
+      "category": "TRADFI",
+      "subcategory": "major_financing",
+      "hot_score": 46.532,
+      "impact_score": 64.8,
+      "heat": 0.748,
+      "novelty": 1.0,
+      "credibility": 0.96,
+      "published_at_myt": "2026-11-25 04:06 UTC+8",
+      "verification_label": "单一权威（未交叉核实）",
+      "verification_status": "SINGLE_TIER1_REPORTED",
+      "sources": [
+        {
+          "name": "Dealroom",
+          "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPdGNsNmZfZHROaU9SMTMtQ0pvUGRGWWFDeWd5b3NaU2RaUG9JQ3BULWJuZmVEZEp3M1U1Q0hWdjRrNXdnaWx1dXhJbmxWYWN0ZTd0SzdscXJnd2x0Vm1rREJ0LThzOEU0QVl3Wlo0SjNkYXpwbEtBNWpvTEtMcG1Lb1lHSFlpZ09wcW9TRHh2eU1ZT21BS2xYT3R4ZkRJbWRIeU1HSlJXLVgwbHNxT2Zna3hES3pMSW9LenBfMg?oc=5",
+          "domain": "app.dealroom.co"
+        },
+        {
+          "name": "Bloomberg.com",
+          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPT0hkbFdEeDFKTWo1UXlkenJzS3l0QWpGSDdIWGxpbTdiMkpzVkl0bFN0d2RUSGxJS3FxNFNjeEVOeE9qUlB6X1ZKNldQdFA5b2NUam1pZjQzXzFZSFZYQ21mUXJlSzVvOWs5dS1lc3A2NG5zeGQ1RXlQR0c4QkxOUVNQUzNyYzBMT1A5emhvX2VNc2thcUJoSjhqYzZjM0Y2ZmdQellESkczaXc?oc=5",
+          "domain": "bloomberg.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59893.62，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_c2d8be3331d4",
+      "headline": "Coldcard reveals how security reviews missed Bitcoin wallet flaw for over 5 years",
+      "category": "CRYPTO",
+      "subcategory": "hack_security",
+      "hot_score": 37.648,
+      "impact_score": 59.6,
+      "heat": 0.7996,
+      "novelty": 1.0,
+      "credibility": 0.79,
+      "published_at_myt": "2026-11-25 03:04 UTC+8",
+      "verification_label": "单源未核实",
+      "verification_status": "UNVERIFIED_OR_RUMOR",
+      "sources": [
+        {
+          "name": "TradingView",
+          "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxPNVplSTFBZVVuTU9jNVg3TkhwcVJIYy1XZ2x5cG5GWjBtQmdUeXVrZ0UtSENUSUZuLUFEUmpCSWVXeFJXcjhWbkd1ZndIem1RYWZQTkZIU3cxMTFoLTVQUTc1YV9tTHIweTNoWGFpQ1Y0QnpTTUlXVHR4SVJkWGttX0FnOEg0WVFzaVV2UHZDQWN0SVNpT2tZUGgxUklFcGEyMUd5dHJGZmZvdHFISS13R0xoVGRwNXJBMV9EOGpJTG9oYkhHR0tEajJWWnEtN3NzSGZzSTlIekdJMU5DcWc?oc=5",
+          "domain": "tradingview.com"
+        },
+        {
+          "name": "TradingView",
+          "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxNTUlfT3d3S1IzcGVEOVFUTmdhVE5yTl9fN1dDdG5sSHJ4Q3VBdXRYQWxrc0c5aVdqZGEzMXlNYktQZExaMk9TMUJTRTRxU0YydGJEMFVCcVFzUGFBR0tTQ0d6bnFUSWs0LTdBY3ZMM2VNamlmbW5RY2lNaW5pRDhucGl5b19DZGZFeVA4eUdlXzJNZWQ4enFEZmtYQjVuQXdwaU1Sb0I0Z1RkRFAwaFp0OGpGNXVvTmhtOTdSMmQ3dFpXeFl3QVFwb3pQYVVDd0ZuNDdj?oc=5",
+          "domain": "tradingview.com"
+        },
+        {
+          "name": "Cointelegraph",
+          "url": "https://cointelegraph.com/news/coldcard-how-security-reviews-missed-bitcoin-wallet-flaw-years?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+          "domain": "cointelegraph.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59781.39，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_4087959b1001",
+      "headline": "Coldcard Bitcoin Exploit, Revisited: How a Hidden Flaw Survived Years of Audits",
+      "category": "CRYPTO",
+      "subcategory": "hack_security",
+      "hot_score": 34.923,
+      "impact_score": 59.1,
+      "heat": 0.748,
+      "novelty": 1.0,
+      "credibility": 0.79,
+      "published_at_myt": "2026-11-25 05:16 UTC+8",
+      "verification_label": "单源未核实",
+      "verification_status": "UNVERIFIED_OR_RUMOR",
+      "sources": [
+        {
+          "name": "Yahoo Tech",
+          "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOQV9KTFFhWS1Tc2Z5dG9sWHZYTEpKZllQWDRRVm15TENpLVlDVXFteGk5Zy04enFfNEctMnRhaUJNN3lYVm83QUp2LUNjUk9HRkVIU3pwNHNSS2FQb21oUXdtYlZiVFUwWktqLThjMXEtb01XdkhXaG16NmVhUmppaXRPLUFsRzZIQVBTNGUyb3lKbGZxZEM4ODYwVXZUTGg5QlVEWg?oc=5",
+          "domain": "tech.yahoo.com"
+        },
+        {
+          "name": "Decrypt",
+          "url": "https://decrypt.co/383930/coldcard-bitcoin-exploit-how-hidden-flaw-survived-years-audits",
+          "domain": "decrypt.co"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 59986.01，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_8f511dfa846c",
+      "headline": "Exclusive | SEC Is Probing Nvidia Amid Departure of CEO Jensen Huang",
+      "category": "TECH_AI",
+      "subcategory": "leadership_governance",
+      "hot_score": 34.471,
+      "impact_score": 76.7,
+      "heat": 0.4885,
+      "novelty": 1.0,
+      "credibility": 0.92,
+      "published_at_myt": "2026-11-25 07:49 UTC+8",
+      "verification_label": "单一权威（未交叉核实）",
+      "verification_status": "SINGLE_TIER1_REPORTED",
+      "sources": [
+        {
+          "name": "WSJ",
+          "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQbjl2b0tzT1ROT2plV1p5RHhQd3hXOEJKRFhOZ1ItZExOQV9oVGkzTU9tcEEyTXhjNHRKQVExRTNRdEtlY24zUFhmS0h0c21FUVVrVVh0NGF2SXFmdm1wcmVRLUlCcG5CMGRIZklSdVBkVElkS3lwRF9LaGg4YzU5b0dsZXlveWxSNzhGYzJlZmRSRkhvUWZRTHB3?oc=5",
+          "domain": "wsj.com"
+        }
+      ],
+      "related_symbols": [
+        "NVDA"
+      ],
+      "price_reaction_display": {
+        "NVDA": "暂无对齐行情"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    },
+    {
+      "event_id": "evt_d84a0713360d",
+      "headline": "'AI trade never died': Traders see room for market recovery, but bitcoin's participation is another story",
+      "category": "CRYPTO",
+      "subcategory": "btc_eth_majors",
+      "hot_score": 33.864,
+      "impact_score": 71.0,
+      "heat": 0.5678,
+      "novelty": 1.0,
+      "credibility": 0.84,
+      "published_at_myt": "2026-11-25 00:00 UTC+8",
+      "verification_label": "单一权威（未交叉核实）",
+      "verification_status": "SINGLE_TIER1_REPORTED",
+      "sources": [
+        {
+          "name": "CoinDesk",
+          "url": "https://www.coindesk.com/markets/2026/11/24/ai-trade-never-died-traders-see-room-for-market-recovery-despite-bitcoin-s-weakness",
+          "domain": "coindesk.com"
+        },
+        {
+          "name": "CoinDesk",
+          "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPS3pSWGt6Ym5aVnloZm15X1R4M2ZMbkhGUFpMUXFZZEg3TmtOTDIzZHBVdFh5bFRxNGFhRTV3eV8yajNYQmVXQ21NLXBRNi1jWWpEMUg4NkV3VXgzSWptMU9vMDVNUnhxTnRQb2t3UUozZi1TWTEtZmxXSnZtdE92emNYcnZMdVpIOG1TX25fRzhRT0oxbXlSdFFLMnEzaUdSUFAxQUV2OEZDbDVOUFRScDVxQzlJblZUb0JPNjJqUTZsZmotU2c?oc=5",
+          "domain": "coindesk.com"
+        }
+      ],
+      "related_symbols": [
+        "BTC/USDT"
+      ],
+      "price_reaction_display": {
+        "BTC/USDT": "24h 窗口未结束（锚定 60108.01，24h_window_pending）"
+      },
+      "note": "价格反应仅事后展示，不参与本辅助热榜排序"
+    }
+  ],
+  "universe": {
+    "crypto": [
+      "BTC/USDT",
+      "ETH/USDT",
+      "SOL/USDT",
+      "XRP/USDT",
+      "BNB/USDT",
+      "DOGE/USDT",
+      "ADA/USDT"
+    ],
+    "equity": [
+      "NVDA",
+      "SPY",
+      "QQQ"
+    ]
+  },
+  "params": {
+    "lookback_days": 30,
+    "daily_z_min": 1.25,
+    "daily_ret_min_pct": 2.5,
+    "bar_z_min": 2.5,
+    "bar_z_vol_confirm": 1.8,
+    "vol_z_min": 2.0,
+    "bar_ret_min_pct": 1.2,
+    "event_pre_hours": 6.0,
+    "event_post_hours": 1.0,
+    "time_tau_hours": 3.0,
+    "w_time": 0.3,
+    "w_impact": 0.25,
+    "w_heat": 0.15,
+    "w_dir": 0.15,
+    "w_rel": 0.15,
+    "attr_score_min": 0.28,
+    "llm_top_k": 3,
+    "common_window_hours": 2.0,
+    "news_hotlist_top_n": 10,
+    "llm_model": "google/gemini-2.5-flash-lite",
+    "max_anomalies_for_llm": 10,
+    "novelty_lookback_days": 3,
+    "news_heat_source_w": 1.0,
+    "news_heat_article_w": 0.35
+  },
+  "note": "价格异动是归因起点；新闻影响分与候选排序不使用未来收益。单源未核实已标注。",
+  "run_cost": {
+    "model": "google/gemini-2.5-flash-lite",
+    "llm_health_ok": true,
+    "llm_health_http": 200,
+    "llm_calls": 8,
+    "prompt_tokens": 5437,
+    "completion_tokens": 466,
+    "catalog_cost_usd": 0.00073,
+    "price_in_per_1m_usd": 0.1,
+    "price_out_per_1m_usd": 0.4
+  }
+}

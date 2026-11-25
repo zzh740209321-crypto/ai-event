@@ -1,0 +1,217 @@
+{
+  "target_symbol": "NVDA",
+  "raw_items_fetched": 412,
+  "exact_duplicates_removed": 10,
+  "event_clusters_output": 333,
+  "dedup_compression_ratio": 0.1917,
+  "layer_breakdown": {
+    "DIRECT": 121,
+    "CROSS_MARKET": 212
+  },
+  "category_breakdown": {
+    "POLITICS_REG": 41,
+    "TECH_AI": 76,
+    "MACRO": 68,
+    "CRYPTO": 50,
+    "TRADFI": 98
+  },
+  "verification_breakdown": {
+    "UNVERIFIED_OR_RUMOR": 220,
+    "SINGLE_TIER1_REPORTED": 78,
+    "MULTI_SOURCE_CONFIRMED": 10,
+    "OFFICIAL_PRIMARY": 25
+  },
+  "direction_breakdown": {
+    "NEUTRAL": 181,
+    "BULLISH": 56,
+    "BEARISH": 74,
+    "MIXED": 22
+  },
+  "latency_metrics": {
+    "source_fetch_median_ms": 394.8,
+    "source_fetch_p95_ms": 1790.4,
+    "pipeline_e2e_median_ms": 0.69,
+    "pipeline_e2e_p95_ms": 1.17,
+    "recent_24h_publish_to_ingest_median_sec": 27738.9
+  },
+  "market_validation": {
+    "events_with_4h_reaction": 233,
+    "events_with_24h_reaction": 190,
+    "spearman_score_vs_abs_ret_24h": -0.1166,
+    "spearman_score_vs_abs_abnormal_ret_24h": -0.1047,
+    "top_quartile_mean_abs_abnormal_ret_24h_pct": 8.763,
+    "bottom_quartile_mean_abs_abnormal_ret_24h_pct": 11.252,
+    "directional_eval_count": 82,
+    "directional_raw_hit_rate": 0.512,
+    "directional_abnormal_eval_count": 77,
+    "directional_abnormal_hit_rate": 0.519
+  },
+  "source_status": [
+    {
+      "source": "GoogleNewsRSS[direct_0_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 69,
+      "latency_ms": 663.6,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 20,
+      "latency_ms": 356.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 93,
+      "latency_ms": 605.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 44,
+      "latency_ms": 393.4,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 91,
+      "latency_ms": 396.1,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 34,
+      "latency_ms": 438.7,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[NVDA]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 15,
+      "latency_ms": 167.7,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[SPY,QQQ,GC=F,CL=F]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 19,
+      "latency_ms": 73.1,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "SEC_EDGAR[NVDA]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 3,
+      "latency_ms": 72.1,
+      "update_lag": "Seconds–2 min after EDGAR acceptance",
+      "historical_window": "Full EDGAR electronic archive (since ~1994/2001)",
+      "note": ""
+    },
+    {
+      "source": "NVIDIA_Newsroom",
+      "status": "OK",
+      "http_code": 200,
+      "items": 6,
+      "latency_ms": 1963.7,
+      "update_lag": "<1–5 min",
+      "historical_window": "Multi-month press release XML feed",
+      "note": ""
+    },
+    {
+      "source": "CoinDesk",
+      "status": "OK",
+      "http_code": 200,
+      "items": 25,
+      "latency_ms": 1385.4,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Cointelegraph",
+      "status": "OK",
+      "http_code": 200,
+      "items": 30,
+      "latency_ms": 98.6,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Decrypt",
+      "status": "OK",
+      "http_code": 200,
+      "items": 38,
+      "latency_ms": 37.3,
+      "update_lag": "2–10 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "The Block",
+      "status": "OK",
+      "http_code": 200,
+      "items": 20,
+      "latency_ms": 52.1,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Kraken Blog",
+      "status": "OK",
+      "http_code": 200,
+      "items": 6,
+      "latency_ms": 1046.8,
+      "update_lag": "5–30 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "BinanceAnnouncements",
+      "status": "OK",
+      "http_code": 200,
+      "items": 23,
+      "latency_ms": 1732.6,
+      "update_lag": "<1 min (direct CMS JSON)",
+      "historical_window": "Paginated CMS archive (hundreds of recent notices)",
+      "note": ""
+    }
+  ],
+  "raw_unfiltered_fetched": 536,
+  "market_bars_loaded": {
+    "NVDA": 50,
+    "SPY": 50,
+    "hourly_vol_pct": 5.358
+  }
+}

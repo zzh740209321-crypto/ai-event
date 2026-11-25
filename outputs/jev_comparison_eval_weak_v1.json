@@ -1,0 +1,139 @@
+{
+  "split_summary": {
+    "train_count": 2148,
+    "test_count": 692,
+    "train_date_range": "2022-11-01..2022-11-16 + 2026-10-20..2026-11-17 (UTC)",
+    "test_date_range": "2026-11-18..2026-11-24 (Held-out future UTC)",
+    "train_gate_positive_rate": 0.492,
+    "test_gate_positive_rate": 0.551,
+    "spot_check_corrections": {
+      "fix_political_statement_cat": 11,
+      "fix_promo_tutorial_noise_gate0": 5,
+      "fix_nvda_governance_cat": 43,
+      "fix_nvda_product_cat": 67,
+      "fix_nvda_irrelevant_crypto_gate0": 18,
+      "fix_national_security_category": 1,
+      "test_fix_promo_tutorial_noise_gate0": 11,
+      "test_fix_nvda_governance_cat": 24,
+      "test_fix_nvda_product_cat": 13,
+      "test_fix_nvda_irrelevant_crypto_gate0": 21,
+      "test_fix_national_security_category": 1
+    }
+  },
+  "onnx_verification": {
+    "sklearn_vs_onnx_50_parity": "48/50",
+    "onnx_single_item_p50_ms": 0.131,
+    "onnx_single_item_p95_ms": 0.162,
+    "onnx_single_item_p99_ms": 0.194,
+    "model_files_bytes": {
+      "jev_subcategory.onnx": 930468,
+      "jev_gate.onnx": 247334,
+      "jev_category.onnx": 344987
+    }
+  },
+  "llm_integration_status": {
+    "litellm_base_url": "https://openrouter.ai/api/v1",
+    "litellm_model": "google/gemini-2.5-flash-lite",
+    "litellm_key_configured": true,
+    "litellm_health_ok": false,
+    "litellm_health_http": 401,
+    "litellm_health_msg": "{\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+    "perplexity_configured": false,
+    "perplexity_status": "SKIPPED_NO_KEY",
+    "routed_to_llm_count": 315,
+    "routed_to_llm_pct": 45.5,
+    "estimated_llm_call_savings_vs_full_pct": 28.9,
+    "estimated_llm_call_savings_with_conf_skip_pct": 54.5,
+    "live_llm_calls_succeeded": 0
+  },
+  "comparison": {
+    "rule_only": {
+      "cat_macro_f1": 0.9414,
+      "cat_weighted_f1": 0.9358,
+      "subcat_weighted_f1": 0.9349,
+      "gate": {
+        "gate_recall": 1.0,
+        "filter_ratio_pct": 0.0,
+        "kept_count": 692
+      },
+      "llm_savings_pct": 0.0,
+      "latency_p50_ms": 0.368,
+      "latency_p99_ms": 0.71,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.0279,
+        "q4_mean_abs_ab24h": 4.799,
+        "q1_mean_abs_ab24h": 5.74,
+        "q4_vs_q1_spread_pct": -0.941,
+        "dir_n": 153,
+        "dir_ab_hit_rate": 0.595
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.1481,
+        "q4_mean_abs_ab24h": 0.954,
+        "q1_mean_abs_ab24h": 0.789,
+        "q4_vs_q1_spread_pct": 0.165,
+        "dir_n": 76,
+        "dir_ab_hit_rate": 0.671
+      }
+    },
+    "weak_only_fast_clf": {
+      "cat_macro_f1": 0.7157,
+      "cat_weighted_f1": 0.7311,
+      "subcat_weighted_f1": 0.6737,
+      "gate": {
+        "gate_precision": 0.6298,
+        "gate_recall": 0.5984,
+        "gate_f1": 0.6137,
+        "kept_count": 362,
+        "filter_ratio_pct": 47.7
+      },
+      "llm_savings_pct": 47.7,
+      "latency_p50_ms": 1.283,
+      "latency_p99_ms": 1.851,
+      "market_all_retained": {
+        "n_24h": 210,
+        "spearman_abs_ab24h": -0.1383,
+        "q4_mean_abs_ab24h": 5.529,
+        "q1_mean_abs_ab24h": 7.159,
+        "q4_vs_q1_spread_pct": -1.63,
+        "dir_n": 90,
+        "dir_ab_hit_rate": 0.578
+      }
+    },
+    "jev_decision_onnx": {
+      "cat_macro_f1": 0.7643,
+      "cat_weighted_f1": 0.7834,
+      "subcat_weighted_f1": 0.7113,
+      "gate": {
+        "gate_precision": 0.5894,
+        "gate_recall": 0.7612,
+        "gate_f1": 0.6644,
+        "kept_count": 492,
+        "filter_ratio_pct": 28.9
+      },
+      "llm_savings_pct": 28.9,
+      "latency_p50_ms": 0.131,
+      "latency_p99_ms": 0.194,
+      "market_all_retained": {
+        "n_24h": 283,
+        "spearman_abs_ab24h": -0.092,
+        "q4_mean_abs_ab24h": 5.028,
+        "q1_mean_abs_ab24h": 6.419,
+        "q4_vs_q1_spread_pct": -1.39,
+        "dir_n": 113,
+        "dir_ab_hit_rate": 0.637
+      },
+      "market_btc_retained": {
+        "n_24h": 124,
+        "spearman_abs_ab24h": 0.1105,
+        "q4_mean_abs_ab24h": 0.97,
+        "q1_mean_abs_ab24h": 0.899,
+        "q4_vs_q1_spread_pct": 0.07,
+        "dir_n": 48,
+        "dir_ab_hit_rate": 0.771
+      }
+    }
+  }
+}

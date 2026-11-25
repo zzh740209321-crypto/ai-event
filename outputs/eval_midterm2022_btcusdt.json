@@ -1,0 +1,355 @@
+{
+  "target_symbol": "BTC/USDT",
+  "raw_items_fetched": 163,
+  "exact_duplicates_removed": 27,
+  "event_clusters_output": 135,
+  "dedup_compression_ratio": 0.1718,
+  "layer_breakdown": {
+    "DIRECT": 68,
+    "CROSS_MARKET": 67
+  },
+  "category_breakdown": {
+    "CRYPTO": 74,
+    "MACRO": 21,
+    "TRADFI": 18,
+    "POLITICS_REG": 13,
+    "TECH_AI": 9
+  },
+  "verification_breakdown": {
+    "SINGLE_TIER1_REPORTED": 48,
+    "UNVERIFIED_OR_RUMOR": 87
+  },
+  "direction_breakdown": {
+    "NEUTRAL": 103,
+    "BEARISH": 23,
+    "BULLISH": 8,
+    "MIXED": 1
+  },
+  "latency_metrics": {
+    "source_fetch_median_ms": 281.8,
+    "source_fetch_p95_ms": 1210.0,
+    "pipeline_e2e_median_ms": 0.44,
+    "pipeline_e2e_p95_ms": 0.7,
+    "recent_24h_publish_to_ingest_median_sec": null
+  },
+  "market_validation": {
+    "events_with_4h_reaction": 135,
+    "events_with_24h_reaction": 135,
+    "spearman_score_vs_abs_ret_24h": -0.0402,
+    "spearman_score_vs_abs_abnormal_ret_24h": 0.0126,
+    "top_quartile_mean_abs_abnormal_ret_24h_pct": 2.281,
+    "bottom_quartile_mean_abs_abnormal_ret_24h_pct": 2.566,
+    "directional_eval_count": 31,
+    "directional_raw_hit_rate": 0.613,
+    "directional_abnormal_eval_count": 28,
+    "directional_abnormal_hit_rate": 0.464
+  },
+  "source_status": [
+    {
+      "source": "GoogleNewsRSS[direct_0_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 13,
+      "latency_ms": 367.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 25,
+      "latency_ms": 351.4,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 21,
+      "latency_ms": 429.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 241.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 4,
+      "latency_ms": 225.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 47,
+      "latency_ms": 569.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm2022_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 12,
+      "latency_ms": 325.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_0_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 75,
+      "latency_ms": 473.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 4,
+      "latency_ms": 249.5,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 7,
+      "latency_ms": 281.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 1,
+      "latency_ms": 254.6,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 14,
+      "latency_ms": 238.3,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 79,
+      "latency_ms": 627.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm2022_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 11,
+      "latency_ms": 278.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_0_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 25,
+      "latency_ms": 277.3,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 6,
+      "latency_ms": 285.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 3,
+      "latency_ms": 315.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 1,
+      "latency_ms": 279.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 10,
+      "latency_ms": 283.7,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 18,
+      "latency_ms": 280.3,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm2022_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 7,
+      "latency_ms": 324.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[BTC-USD,ETH-USD,IBIT]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 143.4,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[SPY,QQQ,GC=F,CL=F]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 87.5,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "CoinDesk",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 1524.7,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Cointelegraph",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 56.3,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Decrypt",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 44.4,
+      "update_lag": "2–10 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "The Block",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 44.6,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Kraken Blog",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 738.0,
+      "update_lag": "5–30 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "BinanceAnnouncements",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 1896.5,
+      "update_lag": "<1 min (direct CMS JSON)",
+      "historical_window": "Paginated CMS archive (hundreds of recent notices)",
+      "note": ""
+    },
+    {
+      "source": "CryptoPanic[OptionalPlugin]",
+      "status": "DISABLED",
+      "http_code": null,
+      "items": 0,
+      "latency_ms": 0.0,
+      "update_lag": "<1 min (paid/keyed)",
+      "historical_window": "API pagination window",
+      "note": "CRYPTOPANIC_API_KEY not set; optional plugin skipped"
+    }
+  ],
+  "raw_unfiltered_fetched": 383,
+  "market_bars_loaded": {
+    "BTCUSDT": 480,
+    "ETHUSDT": 480,
+    "hourly_vol_pct": 0.829
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "target_symbol": "BTC/USDT",
+  "raw_items_fetched": 447,
+  "exact_duplicates_removed": 25,
+  "event_clusters_output": 363,
+  "dedup_compression_ratio": 0.1879,
+  "layer_breakdown": {
+    "CROSS_MARKET": 167,
+    "DIRECT": 196
+  },
+  "category_breakdown": {
+    "MACRO": 37,
+    "CRYPTO": 168,
+    "TECH_AI": 53,
+    "TRADFI": 79,
+    "POLITICS_REG": 26
+  },
+  "verification_breakdown": {
+    "MULTI_SOURCE_CONFIRMED": 12,
+    "SINGLE_TIER1_REPORTED": 94,
+    "OFFICIAL_PRIMARY": 17,
+    "UNVERIFIED_OR_RUMOR": 240
+  },
+  "direction_breakdown": {
+    "BEARISH": 88,
+    "BULLISH": 62,
+    "NEUTRAL": 193,
+    "MIXED": 20
+  },
+  "latency_metrics": {
+    "source_fetch_median_ms": 374.7,
+    "source_fetch_p95_ms": 1397.8,
+    "pipeline_e2e_median_ms": 0.56,
+    "pipeline_e2e_p95_ms": 0.83,
+    "recent_24h_publish_to_ingest_median_sec": 33248.2
+  },
+  "market_validation": {
+    "events_with_4h_reaction": 323,
+    "events_with_24h_reaction": 228,
+    "spearman_score_vs_abs_ret_24h": 0.0283,
+    "spearman_score_vs_abs_abnormal_ret_24h": 0.1499,
+    "top_quartile_mean_abs_abnormal_ret_24h_pct": 0.945,
+    "bottom_quartile_mean_abs_abnormal_ret_24h_pct": 0.789,
+    "directional_eval_count": 82,
+    "directional_raw_hit_rate": 0.427,
+    "directional_abnormal_eval_count": 74,
+    "directional_abnormal_hit_rate": 0.689
+  },
+  "source_status": [
+    {
+      "source": "GoogleNewsRSS[direct_0_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 91,
+      "latency_ms": 566.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 99,
+      "latency_ms": 407.4,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 42,
+      "latency_ms": 342.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 25,
+      "latency_ms": 335.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 76,
+      "latency_ms": 544.5,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 34,
+      "latency_ms": 497.6,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[BTC-USD,ETH-USD,IBIT]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 20,
+      "latency_ms": 165.6,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[SPY,QQQ,GC=F,CL=F]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 19,
+      "latency_ms": 72.2,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "CoinDesk",
+      "status": "OK",
+      "http_code": 200,
+      "items": 25,
+      "latency_ms": 1297.8,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Cointelegraph",
+      "status": "OK",
+      "http_code": 200,
+      "items": 30,
+      "latency_ms": 127.4,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Decrypt",
+      "status": "OK",
+      "http_code": 200,
+      "items": 38,
+      "latency_ms": 86.7,
+      "update_lag": "2–10 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "The Block",
+      "status": "OK",
+      "http_code": 200,
+      "items": 20,
+      "latency_ms": 93.9,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Kraken Blog",
+      "status": "OK",
+      "http_code": 200,
+      "items": 6,
+      "latency_ms": 892.9,
+      "update_lag": "5–30 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "BinanceAnnouncements",
+      "status": "OK",
+      "http_code": 200,
+      "items": 23,
+      "latency_ms": 1583.6,
+      "update_lag": "<1 min (direct CMS JSON)",
+      "historical_window": "Paginated CMS archive (hundreds of recent notices)",
+      "note": ""
+    },
+    {
+      "source": "GDELT_DOC[gdelt_direct]",
+      "status": "ERROR",
+      "http_code": null,
+      "items": 0,
+      "latency_ms": 0.0,
+      "update_lag": "",
+      "historical_window": "",
+      "note": "HTTPSConnectionPool(host='api.gdeltproject.org', port=443): Read timed out. (read timeout=12)"
+    },
+    {
+      "source": "CryptoPanic[OptionalPlugin]",
+      "status": "DISABLED",
+      "http_code": null,
+      "items": 0,
+      "latency_ms": 0.0,
+      "update_lag": "<1 min (paid/keyed)",
+      "historical_window": "API pagination window",
+      "note": "CRYPTOPANIC_API_KEY not set; optional plugin skipped"
+    }
+  ],
+  "raw_unfiltered_fetched": 548,
+  "market_bars_loaded": {
+    "BTCUSDT": 240,
+    "ETHUSDT": 240,
+    "hourly_vol_pct": 0.802
+  }
+}

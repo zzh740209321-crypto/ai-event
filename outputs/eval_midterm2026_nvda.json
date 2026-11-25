@@ -1,0 +1,507 @@
+{
+  "target_symbol": "NVDA",
+  "raw_items_fetched": 1416,
+  "exact_duplicates_removed": 200,
+  "event_clusters_output": 1041,
+  "dedup_compression_ratio": 0.2648,
+  "layer_breakdown": {
+    "DIRECT": 459,
+    "CROSS_MARKET": 582
+  },
+  "category_breakdown": {
+    "TECH_AI": 332,
+    "TRADFI": 304,
+    "MACRO": 146,
+    "POLITICS_REG": 196,
+    "CRYPTO": 63
+  },
+  "verification_breakdown": {
+    "SINGLE_TIER1_REPORTED": 254,
+    "UNVERIFIED_OR_RUMOR": 723,
+    "OFFICIAL_PRIMARY": 39,
+    "MULTI_SOURCE_CONFIRMED": 25
+  },
+  "direction_breakdown": {
+    "NEUTRAL": 743,
+    "BULLISH": 121,
+    "BEARISH": 147,
+    "MIXED": 30
+  },
+  "latency_metrics": {
+    "source_fetch_median_ms": 437.2,
+    "source_fetch_p95_ms": 1110.3,
+    "pipeline_e2e_median_ms": 0.52,
+    "pipeline_e2e_p95_ms": 0.89,
+    "recent_24h_publish_to_ingest_median_sec": null
+  },
+  "market_validation": {
+    "events_with_4h_reaction": 1002,
+    "events_with_24h_reaction": 1041,
+    "spearman_score_vs_abs_ret_24h": 0.0151,
+    "spearman_score_vs_abs_abnormal_ret_24h": -0.0142,
+    "top_quartile_mean_abs_abnormal_ret_24h_pct": 1.803,
+    "bottom_quartile_mean_abs_abnormal_ret_24h_pct": 1.838,
+    "directional_eval_count": 251,
+    "directional_raw_hit_rate": 0.502,
+    "directional_abnormal_eval_count": 207,
+    "directional_abnormal_hit_rate": 0.483
+  },
+  "source_status": [
+    {
+      "source": "GoogleNewsRSS[direct_0_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 50,
+      "latency_ms": 540.7,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 37,
+      "latency_ms": 366.5,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 5,
+      "latency_ms": 321.4,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 7,
+      "latency_ms": 306.5,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 67,
+      "latency_ms": 420.5,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 24,
+      "latency_ms": 340.1,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm_election_w0]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 36,
+      "latency_ms": 364.4,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_0_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 80,
+      "latency_ms": 534.1,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 50,
+      "latency_ms": 420.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 91,
+      "latency_ms": 506.7,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 32,
+      "latency_ms": 449.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 80,
+      "latency_ms": 368.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 56,
+      "latency_ms": 437.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm_election_w1]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 54,
+      "latency_ms": 561.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_0_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 74,
+      "latency_ms": 550.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 48,
+      "latency_ms": 565.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 59,
+      "latency_ms": 504.4,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 12,
+      "latency_ms": 339.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 70,
+      "latency_ms": 626.1,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 94,
+      "latency_ms": 467.6,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm_election_w2]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 91,
+      "latency_ms": 419.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_0_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 56,
+      "latency_ms": 503.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 32,
+      "latency_ms": 439.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 44,
+      "latency_ms": 396.2,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 22,
+      "latency_ms": 308.3,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 81,
+      "latency_ms": 528.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 52,
+      "latency_ms": 446.5,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm_election_w3]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 76,
+      "latency_ms": 509.6,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_0_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 71,
+      "latency_ms": 544.3,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[direct_1_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 39,
+      "latency_ms": 405.0,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[macro_fed_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 50,
+      "latency_ms": 382.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tradfi_flows_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 37,
+      "latency_ms": 434.7,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[tech_ai_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 83,
+      "latency_ms": 475.8,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[politics_reg_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 26,
+      "latency_ms": 376.7,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "GoogleNewsRSS[midterm_election_w4]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 52,
+      "latency_ms": 500.9,
+      "update_lag": "1–10 min",
+      "historical_window": "after:/before: multi-month/year (100 items/query cap)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[NVDA]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 160.5,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "YahooFinanceRSS[SPY,QQQ,GC=F,CL=F]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 69.8,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~15–20 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "SEC_EDGAR[NVDA]",
+      "status": "OK",
+      "http_code": 200,
+      "items": 3,
+      "latency_ms": 59.2,
+      "update_lag": "Seconds–2 min after EDGAR acceptance",
+      "historical_window": "Full EDGAR electronic archive (since ~1994/2001)",
+      "note": ""
+    },
+    {
+      "source": "NVIDIA_Newsroom",
+      "status": "OK",
+      "http_code": 200,
+      "items": 14,
+      "latency_ms": 1619.5,
+      "update_lag": "<1–5 min",
+      "historical_window": "Multi-month press release XML feed",
+      "note": ""
+    },
+    {
+      "source": "CoinDesk",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 1204.8,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Cointelegraph",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 60.8,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Decrypt",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 91.0,
+      "update_lag": "2–10 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "The Block",
+      "status": "OK",
+      "http_code": 200,
+      "items": 0,
+      "latency_ms": 95.1,
+      "update_lag": "1–5 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "Kraken Blog",
+      "status": "OK",
+      "http_code": 200,
+      "items": 4,
+      "latency_ms": 732.5,
+      "update_lag": "5–30 min",
+      "historical_window": "Latest ~20–40 items only (requires self-hosted archive)",
+      "note": ""
+    },
+    {
+      "source": "BinanceAnnouncements",
+      "status": "OK",
+      "http_code": 200,
+      "items": 25,
+      "latency_ms": 1508.9,
+      "update_lag": "<1 min (direct CMS JSON)",
+      "historical_window": "Paginated CMS archive (hundreds of recent notices)",
+      "note": ""
+    }
+  ],
+  "raw_unfiltered_fetched": 1884,
+  "market_bars_loaded": {
+    "NVDA": 169,
+    "SPY": 169,
+    "hourly_vol_pct": 1.342
+  }
+}

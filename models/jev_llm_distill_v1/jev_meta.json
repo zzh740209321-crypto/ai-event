@@ -1,0 +1,43 @@
+{
+  "model_name": "jev/decision",
+  "version": "llm_distill_v1",
+  "teacher": "google/gemini-2.5-flash-lite",
+  "architecture": "TF-IDF(word 1-2g) + LogisticRegression",
+  "gate_threshold": 0.4,
+  "train_samples_full_split": 2148,
+  "train_samples_llm_teacher": 1437,
+  "test_samples": 692,
+  "test_llm_gold": 692,
+  "llm_distill_teacher_used": true,
+  "categories": [
+    "CRYPTO",
+    "MACRO",
+    "POLITICS_REG",
+    "TECH_AI",
+    "TRADFI"
+  ],
+  "subcategories": [
+    "altcoins_ecosystem",
+    "btc_eth_majors",
+    "commodities_gold_oil",
+    "earnings_guidance",
+    "employment_nfp",
+    "enforcement_lawsuit",
+    "equities_index",
+    "etf_institutional_flows",
+    "exchange_listing",
+    "fed_rates",
+    "geopolitics_tariffs",
+    "hack_security",
+    "inflation_cpi",
+    "leadership_governance",
+    "liquidation_solvency",
+    "political_statement",
+    "product_launch",
+    "protocol_milestone",
+    "regulation_policy",
+    "usd_treasury_liquidity",
+    "valuation_capex"
+  ],
+  "previous_weak_onnx_dir": "models/jev_weak_v1"
+}

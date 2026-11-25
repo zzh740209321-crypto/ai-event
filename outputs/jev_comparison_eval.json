@@ -1,0 +1,539 @@
+{
+  "split_summary": {
+    "train_count": 2148,
+    "test_count": 692,
+    "train_date_range": "2022-11-01..2022-11-16 + 2026-10-20..2026-11-17 (UTC)",
+    "test_date_range": "2026-11-18..2026-11-24 (Held-out future UTC)",
+    "train_llm_teacher_count": 1437,
+    "test_llm_gold_count": 692,
+    "test_llm_missing": 0,
+    "unique_llm_labels": 1728,
+    "train_gate_positive_rate_llm": 0.664,
+    "test_gate_positive_rate_llm": 0.694,
+    "spot_check_corrections": {
+      "llm_teacher_train": 1437,
+      "fix_political_statement_cat": 11,
+      "fix_promo_tutorial_noise_gate0": 5,
+      "fix_nvda_governance_cat": 43,
+      "fix_nvda_product_cat": 67,
+      "fix_nvda_irrelevant_crypto_gate0": 18,
+      "fix_national_security_category": 1,
+      "llm_test_gold": 692,
+      "test_fix_promo_tutorial_noise_gate0": 11,
+      "test_fix_nvda_governance_cat": 24,
+      "test_fix_nvda_product_cat": 13,
+      "test_fix_nvda_irrelevant_crypto_gate0": 21,
+      "test_fix_national_security_category": 1
+    },
+    "gold_source": "google/gemini-2.5-flash-lite teacher labels (test gold replaced to remove rule-same-source bias)"
+  },
+  "labeling_cost": {
+    "model": "google/gemini-2.5-flash-lite",
+    "price_in_per_1m_usd": 0.1,
+    "price_out_per_1m_usd": 0.4,
+    "jsonl_rows_including_resumes": 1938,
+    "unique_event_ids": 1728,
+    "prompt_tokens_all_stored_calls": 682813,
+    "completion_tokens_all_stored_calls": 247985,
+    "catalog_cost_usd_all_stored_calls": 0.167475,
+    "prompt_tokens_unique_latest": 608065,
+    "completion_tokens_unique_latest": 220969,
+    "catalog_cost_usd_unique_latest": 0.149194,
+    "openrouter_account_usage_usd": 0.16778734,
+    "openrouter_limit_remaining_usd": 49.83221266,
+    "note": "Account usage is the billed total on this key after labeling, health checks and 8 live latency probes. Catalog cost applies listed OpenRouter prices to stored prompt+completion tokens. No keys are persisted in this file."
+  },
+  "llm_vs_audit_agreement": {
+    "n_paired": 2129,
+    "gate_agree": 0.5331,
+    "cat_agree": 0.7412,
+    "subcat_agree": 0.4932,
+    "human_spotcheck_n": 40,
+    "human_spotcheck_llm_category_acceptable": "37/40",
+    "human_spotcheck_rate": 0.925,
+    "human_spotcheck_notes": "抽检 24 条大类分歧 + 16 条一致样本。LLM 在 Anthropic IPO/NVDA 产品与矿业公司报道上优于规则（规则常打成 TRADFI）。明确错误 3 条：通胀砸盘被标成 CRYPTO、美元避险被标成大宗商品、中期选举对加密影响被标成 CRYPTO。门控上 LLM 对部分重大政治结果偏保守（如民主党赢下两院 is_relevant=false）。"
+  },
+  "onnx_verification": {
+    "sklearn_vs_onnx_50_parity": "50/50",
+    "onnx_single_item_p50_ms": 0.147,
+    "onnx_single_item_p95_ms": 0.184,
+    "onnx_single_item_p99_ms": 0.205,
+    "model_files_bytes": {
+      "jev_subcategory.onnx": 833330,
+      "jev_gate.onnx": 240800,
+      "jev_category.onnx": 334418
+    },
+    "weak_v1_kept_at": "models/jev_weak_v1",
+    "distill_v1_copy_at": "models/jev_llm_distill_v1"
+  },
+  "llm_integration_status": {
+    "litellm_base_url": "https://openrouter.ai/api/v1",
+    "litellm_model": "google/gemini-2.5-flash-lite",
+    "litellm_key_configured": true,
+    "litellm_health_ok": true,
+    "litellm_health_http": 200,
+    "litellm_health_msg": "OK",
+    "perplexity_configured": false,
+    "perplexity_status": "SKIPPED_NO_KEY",
+    "test_set_teacher_labels_reused": true,
+    "routed_gate_only_count": 612,
+    "routed_gate_only_pct": 88.4,
+    "routed_conf_skip_count": 370,
+    "routed_conf_skip_pct": 53.5,
+    "estimated_llm_call_savings_vs_full_pct": 11.6,
+    "estimated_llm_call_savings_with_conf_skip_pct": 46.5,
+    "full_test_teacher_cost_usd": 0.060303,
+    "full_test_prompt_tokens": 246044,
+    "full_test_completion_tokens": 89246,
+    "gate_only_routed_cost": {
+      "n_calls": 612,
+      "n_with_tokens": 612,
+      "prompt_tokens": 217768,
+      "completion_tokens": 79517,
+      "cost_usd_catalog": 0.053584
+    },
+    "conf_skip_routed_cost": {
+      "n_calls": 370,
+      "n_with_tokens": 370,
+      "prompt_tokens": 132315,
+      "completion_tokens": 48273,
+      "cost_usd_catalog": 0.032541
+    },
+    "live_latency_probes": {
+      "n": 8,
+      "ok": 8,
+      "errors": 0,
+      "p50_ms": 795.6,
+      "p99_ms": 1285.8,
+      "mean_ms": 856.2
+    }
+  },
+  "comparison": {
+    "rule_only": {
+      "cat_macro_f1": 0.6738,
+      "cat_weighted_f1": 0.7273,
+      "subcat_weighted_f1": 0.4803,
+      "gate": {
+        "gate_precision": 0.6936,
+        "gate_recall": 1.0,
+        "gate_f1": 0.8191,
+        "kept_count": 692,
+        "filter_ratio_pct": 0.0
+      },
+      "llm_savings_pct": 0.0,
+      "latency_p50_ms": 0.376,
+      "latency_p99_ms": 0.672,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.0279,
+        "q4_mean_abs_ab24h": 4.799,
+        "q1_mean_abs_ab24h": 5.74,
+        "q4_vs_q1_spread_pct": -0.941,
+        "dir_n": 153,
+        "dir_ab_hit_rate": 0.595,
+        "dir_ab_hit_ci95": [
+          0.516,
+          0.669
+        ]
+      },
+      "market_all_retained": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.0279,
+        "q4_mean_abs_ab24h": 4.799,
+        "q1_mean_abs_ab24h": 5.74,
+        "q4_vs_q1_spread_pct": -0.941,
+        "dir_n": 153,
+        "dir_ab_hit_rate": 0.595,
+        "dir_ab_hit_ci95": [
+          0.516,
+          0.669
+        ]
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.1481,
+        "q4_mean_abs_ab24h": 0.954,
+        "q1_mean_abs_ab24h": 0.789,
+        "q4_vs_q1_spread_pct": 0.165,
+        "dir_n": 76,
+        "dir_ab_hit_rate": 0.671,
+        "dir_ab_hit_ci95": [
+          0.559,
+          0.766
+        ]
+      },
+      "market_btc_retained": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.1481,
+        "q4_mean_abs_ab24h": 0.954,
+        "q1_mean_abs_ab24h": 0.789,
+        "q4_vs_q1_spread_pct": 0.165,
+        "dir_n": 76,
+        "dir_ab_hit_rate": 0.671,
+        "dir_ab_hit_ci95": [
+          0.559,
+          0.766
+        ]
+      },
+      "n_test": 692,
+      "cost_usd_on_test": 0.0,
+      "note": "F1 vs LLM test gold (no longer same-source as rules)"
+    },
+    "weak_only_fast_clf": {
+      "cat_macro_f1": 0.641,
+      "cat_weighted_f1": 0.7219,
+      "subcat_weighted_f1": 0.4313,
+      "gate": {
+        "gate_precision": 0.6796,
+        "gate_recall": 0.5125,
+        "gate_f1": 0.5843,
+        "kept_count": 362,
+        "filter_ratio_pct": 47.7
+      },
+      "llm_savings_pct": 47.7,
+      "latency_p50_ms": 1.271,
+      "latency_p99_ms": 1.703,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.0195,
+        "q4_mean_abs_ab24h": 4.664,
+        "q1_mean_abs_ab24h": 5.434,
+        "q4_vs_q1_spread_pct": -0.77,
+        "dir_n": 153,
+        "dir_ab_hit_rate": 0.595,
+        "dir_ab_hit_ci95": [
+          0.516,
+          0.669
+        ]
+      },
+      "market_all_retained": {
+        "n_24h": 210,
+        "spearman_abs_ab24h": -0.1383,
+        "q4_mean_abs_ab24h": 5.529,
+        "q1_mean_abs_ab24h": 7.159,
+        "q4_vs_q1_spread_pct": -1.63,
+        "dir_n": 90,
+        "dir_ab_hit_rate": 0.578,
+        "dir_ab_hit_ci95": [
+          0.475,
+          0.675
+        ]
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.1375,
+        "q4_mean_abs_ab24h": 0.954,
+        "q1_mean_abs_ab24h": 0.859,
+        "q4_vs_q1_spread_pct": 0.095,
+        "dir_n": 76,
+        "dir_ab_hit_rate": 0.671,
+        "dir_ab_hit_ci95": [
+          0.559,
+          0.766
+        ]
+      },
+      "market_btc_retained": {
+        "n_24h": 78,
+        "spearman_abs_ab24h": 0.2577,
+        "q4_mean_abs_ab24h": 0.985,
+        "q1_mean_abs_ab24h": 0.806,
+        "q4_vs_q1_spread_pct": 0.179,
+        "dir_n": 36,
+        "dir_ab_hit_rate": 0.722,
+        "dir_ab_hit_ci95": [
+          0.56,
+          0.842
+        ]
+      },
+      "n_test": 692,
+      "cost_usd_on_test": 0.0,
+      "note": "trained on rule+market weak labels (n=2148), evaluated on LLM gold"
+    },
+    "llm_distill_onnx": {
+      "cat_macro_f1": 0.7294,
+      "cat_weighted_f1": 0.8225,
+      "subcat_weighted_f1": 0.6046,
+      "gate": {
+        "gate_precision": 0.7435,
+        "gate_recall": 0.9479,
+        "gate_f1": 0.8333,
+        "kept_count": 612,
+        "filter_ratio_pct": 11.6
+      },
+      "llm_savings_pct": 11.6,
+      "latency_p50_ms": 0.147,
+      "latency_p99_ms": 0.205,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": 0.009,
+        "q4_mean_abs_ab24h": 5.24,
+        "q1_mean_abs_ab24h": 5.217,
+        "q4_vs_q1_spread_pct": 0.024,
+        "dir_n": 153,
+        "dir_ab_hit_rate": 0.595,
+        "dir_ab_hit_ci95": [
+          0.516,
+          0.669
+        ]
+      },
+      "market_all_retained": {
+        "n_24h": 357,
+        "spearman_abs_ab24h": 0.0387,
+        "q4_mean_abs_ab24h": 5.143,
+        "q1_mean_abs_ab24h": 4.621,
+        "q4_vs_q1_spread_pct": 0.522,
+        "dir_n": 141,
+        "dir_ab_hit_rate": 0.603,
+        "dir_ab_hit_ci95": [
+          0.52,
+          0.68
+        ]
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.135,
+        "q4_mean_abs_ab24h": 0.897,
+        "q1_mean_abs_ab24h": 0.778,
+        "q4_vs_q1_spread_pct": 0.12,
+        "dir_n": 76,
+        "dir_ab_hit_rate": 0.671,
+        "dir_ab_hit_ci95": [
+          0.559,
+          0.766
+        ]
+      },
+      "market_btc_retained": {
+        "n_24h": 203,
+        "spearman_abs_ab24h": 0.1565,
+        "q4_mean_abs_ab24h": 0.883,
+        "q1_mean_abs_ab24h": 0.714,
+        "q4_vs_q1_spread_pct": 0.169,
+        "dir_n": 71,
+        "dir_ab_hit_rate": 0.676,
+        "dir_ab_hit_ci95": [
+          0.561,
+          0.773
+        ]
+      },
+      "n_test": 692,
+      "cost_usd_on_test": 0.0,
+      "train_n": 1437,
+      "note": "distilled from gemini-2.5-flash-lite teacher; current models/jev_*.onnx"
+    },
+    "hybrid_gate_plus_llm": {
+      "cat_macro_f1": 0.9847,
+      "cat_weighted_f1": 0.9912,
+      "subcat_weighted_f1": 0.9741,
+      "gate": {
+        "gate_precision": 0.7435,
+        "gate_recall": 0.9479,
+        "gate_f1": 0.8333,
+        "kept_count": 612,
+        "filter_ratio_pct": 11.6
+      },
+      "llm_savings_pct": 11.6,
+      "latency_p50_ms": 0.147,
+      "latency_p99_ms": 0.205,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.1223,
+        "q4_mean_abs_ab24h": 4.241,
+        "q1_mean_abs_ab24h": 6.9,
+        "q4_vs_q1_spread_pct": -2.659,
+        "dir_n": 152,
+        "dir_ab_hit_rate": 0.605,
+        "dir_ab_hit_ci95": [
+          0.526,
+          0.679
+        ]
+      },
+      "market_all_retained": {
+        "n_24h": 357,
+        "spearman_abs_ab24h": -0.1151,
+        "q4_mean_abs_ab24h": 4.175,
+        "q1_mean_abs_ab24h": 6.877,
+        "q4_vs_q1_spread_pct": -2.702,
+        "dir_n": 140,
+        "dir_ab_hit_rate": 0.614,
+        "dir_ab_hit_ci95": [
+          0.532,
+          0.691
+        ]
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.0356,
+        "q4_mean_abs_ab24h": 0.817,
+        "q1_mean_abs_ab24h": 0.814,
+        "q4_vs_q1_spread_pct": 0.003,
+        "dir_n": 96,
+        "dir_ab_hit_rate": 0.635,
+        "dir_ab_hit_ci95": [
+          0.536,
+          0.725
+        ]
+      },
+      "market_btc_retained": {
+        "n_24h": 203,
+        "spearman_abs_ab24h": 0.0352,
+        "q4_mean_abs_ab24h": 0.784,
+        "q1_mean_abs_ab24h": 0.784,
+        "q4_vs_q1_spread_pct": -0.0,
+        "dir_n": 91,
+        "dir_ab_hit_rate": 0.637,
+        "dir_ab_hit_ci95": [
+          0.535,
+          0.729
+        ]
+      },
+      "n_test": 692,
+      "llm_calls": 612,
+      "cost_usd_on_test": 0.053584,
+      "cost_note": "actual catalog price of reused teacher tokens on gated-in test items (no second bill)",
+      "llm_latency_p50_ms": 795.6,
+      "llm_latency_p99_ms": 1285.8,
+      "latency_note": "ONNX p50/p99 for the gate; LLM RTT from live probes on already-labeled items",
+      "note": "gated-in items use real LLM extraction labels; gated-out use distilled ONNX category"
+    },
+    "hybrid_gate_conf_skip_plus_llm": {
+      "cat_macro_f1": 0.9655,
+      "cat_weighted_f1": 0.9782,
+      "subcat_weighted_f1": 0.8874,
+      "gate": {
+        "gate_precision": 0.7189,
+        "gate_recall": 0.5542,
+        "gate_f1": 0.6259,
+        "kept_count": 370,
+        "filter_ratio_pct": 46.5
+      },
+      "llm_savings_pct": 46.5,
+      "latency_p50_ms": 0.147,
+      "latency_p99_ms": 0.205,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.0712,
+        "q4_mean_abs_ab24h": 4.584,
+        "q1_mean_abs_ab24h": 6.072,
+        "q4_vs_q1_spread_pct": -1.487,
+        "dir_n": 141,
+        "dir_ab_hit_rate": 0.61,
+        "dir_ab_hit_ci95": [
+          0.528,
+          0.687
+        ]
+      },
+      "market_all_retained": {
+        "n_24h": 191,
+        "spearman_abs_ab24h": -0.0688,
+        "q4_mean_abs_ab24h": 6.272,
+        "q1_mean_abs_ab24h": 6.58,
+        "q4_vs_q1_spread_pct": -0.308,
+        "dir_n": 65,
+        "dir_ab_hit_rate": 0.585,
+        "dir_ab_hit_ci95": [
+          0.463,
+          0.696
+        ]
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.0876,
+        "q4_mean_abs_ab24h": 0.822,
+        "q1_mean_abs_ab24h": 0.794,
+        "q4_vs_q1_spread_pct": 0.027,
+        "dir_n": 80,
+        "dir_ab_hit_rate": 0.65,
+        "dir_ab_hit_ci95": [
+          0.541,
+          0.745
+        ]
+      },
+      "market_btc_retained": {
+        "n_24h": 81,
+        "spearman_abs_ab24h": -0.1117,
+        "q4_mean_abs_ab24h": 0.657,
+        "q1_mean_abs_ab24h": 0.81,
+        "q4_vs_q1_spread_pct": -0.153,
+        "dir_n": 33,
+        "dir_ab_hit_rate": 0.606,
+        "dir_ab_hit_ci95": [
+          0.437,
+          0.753
+        ]
+      },
+      "n_test": 692,
+      "llm_calls": 370,
+      "cost_usd_on_test": 0.032541,
+      "note": "send to LLM only if gate=1 and (cat_prob<0.72 or controversial subcategory)"
+    },
+    "previous_weak_onnx_on_llm_gold": {
+      "cat_macro_f1": 0.6952,
+      "cat_weighted_f1": 0.7731,
+      "subcat_weighted_f1": 0.4619,
+      "gate": {
+        "gate_precision": 0.7033,
+        "gate_recall": 0.7208,
+        "gate_f1": 0.7119,
+        "kept_count": 492,
+        "filter_ratio_pct": 28.9
+      },
+      "llm_savings_pct": 28.9,
+      "latency_p50_ms": null,
+      "latency_p99_ms": null,
+      "market_all": {
+        "n_24h": 415,
+        "spearman_abs_ab24h": -0.02,
+        "q4_mean_abs_ab24h": 4.75,
+        "q1_mean_abs_ab24h": 5.519,
+        "q4_vs_q1_spread_pct": -0.769,
+        "dir_n": 153,
+        "dir_ab_hit_rate": 0.595,
+        "dir_ab_hit_ci95": [
+          0.516,
+          0.669
+        ]
+      },
+      "market_all_retained": {
+        "n_24h": 283,
+        "spearman_abs_ab24h": -0.092,
+        "q4_mean_abs_ab24h": 5.028,
+        "q1_mean_abs_ab24h": 6.419,
+        "q4_vs_q1_spread_pct": -1.39,
+        "dir_n": 113,
+        "dir_ab_hit_rate": 0.637,
+        "dir_ab_hit_ci95": [
+          0.545,
+          0.72
+        ]
+      },
+      "market_btc": {
+        "n_24h": 227,
+        "spearman_abs_ab24h": 0.141,
+        "q4_mean_abs_ab24h": 0.954,
+        "q1_mean_abs_ab24h": 0.837,
+        "q4_vs_q1_spread_pct": 0.116,
+        "dir_n": 76,
+        "dir_ab_hit_rate": 0.671,
+        "dir_ab_hit_ci95": [
+          0.559,
+          0.766
+        ]
+      },
+      "market_btc_retained": {
+        "n_24h": 124,
+        "spearman_abs_ab24h": 0.1105,
+        "q4_mean_abs_ab24h": 0.97,
+        "q1_mean_abs_ab24h": 0.899,
+        "q4_vs_q1_spread_pct": 0.07,
+        "dir_n": 48,
+        "dir_ab_hit_rate": 0.771,
+        "dir_ab_hit_ci95": [
+          0.635,
+          0.867
+        ]
+      },
+      "n_test": 692,
+      "note": "previous jev_weak_v1 ONNX, evaluated on LLM test gold (not retrained)"
+    }
+  }
+}
