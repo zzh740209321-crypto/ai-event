@@ -25,6 +25,7 @@ from fin_news_events.sources import (
     fetch_cryptopanic_plugin,
     fetch_gdelt_doc,
     fetch_google_news_rss,
+    fetch_market_wrap_rss,
     fetch_nvidia_newsroom_rss,
     fetch_sec_company_filings,
     fetch_yahoo_ticker_rss,
@@ -159,6 +160,11 @@ def collect_two_layer_news(
         nv_items, nv_st = fetch_nvidia_newsroom_rss(client, start_dt, end_dt, conditional=conditional)
         all_items.extend(nv_items)
         stats.append(nv_st)
+
+    if profile.asset_class == "EQUITY":
+        mw_items, mw_sts = fetch_market_wrap_rss(client, start_dt, end_dt, conditional=conditional)
+        all_items.extend(mw_items)
+        stats.extend(mw_sts)
 
     # Crypto specialized RSS & Binance Official CMS
     c_items, c_stats = fetch_crypto_rss(client, start_dt, end_dt, conditional=conditional)

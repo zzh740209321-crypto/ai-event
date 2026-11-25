@@ -17,12 +17,55 @@ from fin_news_events.sources.base import (
 
 GNEWS_RSS_URL = "https://news.google.com/rss/search"
 
+PUBLISHER_DOMAIN_MAP = {
+    "reuters": "reuters.com",
+    "associated press": "apnews.com",
+    "ap news": "apnews.com",
+    "cnbc": "cnbc.com",
+    "bloomberg": "bloomberg.com",
+    "the wall street journal": "wsj.com",
+    "wall street journal": "wsj.com",
+    "wsj": "wsj.com",
+    "financial times": "ft.com",
+    "the new york times": "nytimes.com",
+    "new york times": "nytimes.com",
+    "marketwatch": "marketwatch.com",
+    "barron's": "barrons.com",
+    "barrons": "barrons.com",
+    "investopedia": "investopedia.com",
+    "investor's business daily": "investors.com",
+    "yahoo finance": "finance.yahoo.com",
+    "nbc news": "nbcnews.com",
+    "abc news": "abcnews.go.com",
+    "bbc": "bbc.com",
+    "bbc news": "bbc.com",
+    "coindesk": "coindesk.com",
+    "the block": "theblock.co",
+    "cointelegraph": "cointelegraph.com",
+    "decrypt": "decrypt.co",
+    "the motley fool": "fool.com",
+    "fortune": "fortune.com",
+    "cnn": "cnn.com",
+    "the washington post": "washingtonpost.com",
+    "the hill": "thehill.com",
+    "kiplinger": "kiplinger.com",
+}
+
 
 def _clean_html(raw: str) -> str:
     if not raw:
         return ""
     txt = BeautifulSoup(raw, "lxml").get_text(" ", strip=True)
     return re.sub(r"\s+", " ", txt).strip()
+
+
+def _resolve_publisher_domain(publisher: str, publisher_url: str, link: str) -> str:
+    domain = extract_domain(publisher_url) if publisher_url else extract_domain(link)
+    if domain in ("unknown", "news.google.com", "") and publisher:
+        mapped = PUBLISHER_DOMAIN_MAP.get(publisher.strip().lower())
+        if mapped:
+            return mapped
+    return domain
 
 
 def fetch_google_news_rss(
@@ -36,7 +79,6 @@ def fetch_google_news_rss(
 ) -> tuple[list[RawNewsItem], SourceFetchStats]:
     """Fetch Google News RSS using after:/before: date bounds or when:Nd."""
     now = datetime.now(timezone.utc)
-    # Use explicit after:/before: when historical or >1d window; use when:1d for live polling
     span_days = max(1, int((end_dt - start_dt).total_seconds() // 86400) + 1)
     if (now - end_dt).total_seconds() > 3600 * 6 or span_days > 2:
         after_s = (start_dt - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -78,11 +120,10 @@ def fetch_google_news_rss(
             src_el = el.find("source")
             publisher = (src_el.text or "").strip() if src_el is not None and src_el.text else ""
             publisher_url = src_el.attrib.get("url", "") if src_el is not None else ""
-            # Strip trailing " - Publisher" from Google News title
             title = raw_title
             if publisher and title.endswith(f" - {publisher}"):
                 title = title[: -(len(publisher) + 3)].strip()
-            domain = extract_domain(publisher_url) if publisher_url else extract_domain(link)
+            domain = _resolve_publisher_domain(publisher, publisher_url, link)
             desc = _clean_html(el.findtext("description") or "")
             items.append(
                 RawNewsItem(

@@ -50,9 +50,12 @@ def main() -> None:
     parser.add_argument("--label-build-pool", action="store_true", help="Build a time-split train+test labeling pool (all test + stratified train)")
     parser.add_argument("--label-use-gate", action="store_true", help="Only label events the ONNX gate would send to LLM")
     parser.add_argument("--llm-model", type=str, default=None, help="Optional LLM model override")
-    parser.add_argument("--hotlist", action="store_true", help="Build UTC+8 move-attribution board (and auxiliary news hotlist)")
-    parser.add_argument("--date", type=str, default=None, help="Hotlist date YYYY-MM-DD in UTC+8 (default: last 3 calendar days)")
-    parser.add_argument("--hotlist-days", type=int, default=3, help="If --date is omitted, number of recent UTC+8 days to include")
+    parser.add_argument("--hotlist", action="store_true", help="Build move-attribution board (and auxiliary news hotlist)")
+    parser.add_argument("--market", choices=["all", "us", "crypto"], default="all", help="Market universe for --hotlist (us=ET regular session, crypto=UTC+8 day, all=both)")
+    parser.add_argument("--date", type=str, default=None, help="Hotlist date YYYY-MM-DD (ET session date for --market us; UTC+8 date for crypto/all)")
+    parser.add_argument("--hotlist-days", type=int, default=3, help="If --date is omitted, number of recent days to include")
+    parser.add_argument("--no-fetch-news", action="store_true", help="Skip live RSS/Google News fetch in --hotlist and use local corpus only")
+    parser.add_argument("--no-online-verify", action="store_true", help="Skip Perplexity/OpenRouter online fact-checking in --hotlist")
 
     args = parser.parse_args()
 
@@ -97,7 +100,14 @@ def main() -> None:
         else:
             n = max(1, int(args.hotlist_days))
             days = [today - timedelta(days=i) for i in range(n - 1, -1, -1)]
-        res = run_hotlist(days, output_dir=args.output_dir, model_override=args.llm_model)
+        res = run_hotlist(
+            days,
+            output_dir=args.output_dir,
+            model_override=args.llm_model,
+            market=args.market,
+            fetch_news=not args.no_fetch_news,
+            verify_online=not args.no_online_verify,
+        )
         print(json.dumps(res, ensure_ascii=False, indent=2))
         return
 

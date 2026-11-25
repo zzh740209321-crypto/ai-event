@@ -24,26 +24,41 @@ SOURCE_CREDIBILITY: dict[str, float] = {
     "ft.com": 0.92,
     "nytimes.com": 0.89,
     "the new york times": 0.89,
-    "cnbc.com": 0.87,
-    "cnbc": 0.87,
-    "apnews.com": 0.90,
+    "cnbc.com": 0.88,
+    "cnbc": 0.88,
+    "apnews.com": 0.92,
+    "ap news": 0.92,
+    "associated press": 0.92,
     "bbc.com": 0.88,
+    "bbc news": 0.88,
     "abcnews.go.com": 0.85,
     "nbcnews.com": 0.85,
+    "nbc business": 0.85,
+    "washingtonpost.com": 0.87,
+    "cnn.com": 0.82,
     "coindesk.com": 0.84,
     "coindesk": 0.84,
     "theblock.co": 0.84,
     "the block": 0.84,
     "barrons.com": 0.85,
-    "marketwatch.com": 0.81,
+    "barron's": 0.85,
+    "marketwatch.com": 0.82,
+    "marketwatch": 0.82,
+    "investopedia.com": 0.80,
+    "investopedia": 0.80,
+    "investors.com": 0.80,
+    "investor's business daily": 0.80,
+    "fortune.com": 0.80,
+    "thehill.com": 0.78,
+    "kiplinger.com": 0.76,
     "time.com": 0.82,
     "fidelity.com": 0.83,
     "cointelegraph.com": 0.76,
     "cointelegraph": 0.76,
     "decrypt.co": 0.76,
     "decrypt": 0.76,
-    "finance.yahoo.com": 0.74,
-    "yahoo finance": 0.74,
+    "finance.yahoo.com": 0.76,
+    "yahoo finance": 0.76,
     "kraken.com": 0.84,
     "blog.kraken.com": 0.84,
     "fool.com": 0.65,
@@ -246,3 +261,56 @@ def score_event(
             "verification_V": round(v_factor, 3),
         },
     )
+
+
+AUTHORITY_OFFICIAL_DOMAINS = {"sec.gov", "nvidianews.nvidia.com", "binance.com", "federalreserve.gov", "whitehouse.gov", "treasury.gov"}
+AUTHORITY_WIRE_DOMAINS = {"reuters.com", "apnews.com", "bloomberg.com", "wsj.com", "ft.com"}
+
+
+def compute_authority_verification(sources: list[dict], verification_status: str = "") -> dict:
+    """Compute independent source count, authority weight, and confirmed/single_source/unverified tier."""
+    real_domains: set[str] = set()
+    credible_domains: set[str] = set()
+    max_cred = 0.0
+    has_official = False
+    has_wire = False
+    for s in sources or []:
+        dom = str(s.get("domain") or "").lower().strip()
+        name = str(s.get("name") or "").lower().strip()
+        if not dom or dom in ("unknown", "news.google.com"):
+            dom = name
+        if not dom:
+            continue
+        real_domains.add(dom)
+        cred = get_source_credibility(name, dom)
+        max_cred = max(max_cred, cred)
+        if s.get("is_primary_official") or dom in AUTHORITY_OFFICIAL_DOMAINS:
+            has_official = True
+            credible_domains.add(dom)
+        elif dom in AUTHORITY_WIRE_DOMAINS:
+            has_wire = True
+            credible_domains.add(dom)
+        elif cred >= 0.72:
+            credible_domains.add(dom)
+
+    # Authority score in [0, 1] weighting official/SEC/wires higher
+    auth_bonus = 0.12 if has_official else (0.07 if has_wire else 0.0)
+    multi_bonus = min(0.10, 0.04 * max(0, len(credible_domains) - 1))
+    authority_score = round(min(1.0, max_cred + auth_bonus + multi_bonus), 3)
+
+    if has_official or verification_status == "OFFICIAL_PRIMARY" or len(credible_domains) >= 2 or verification_status == "MULTI_SOURCE_CONFIRMED":
+        tier = "confirmed"
+    elif len(credible_domains) == 1 or verification_status == "SINGLE_TIER1_REPORTED" or max_cred >= 0.80:
+        tier = "single_source"
+    else:
+        tier = "unverified"
+
+    return {
+        "independent_sources_count": len(real_domains),
+        "credible_sources_count": len(credible_domains),
+        "independent_domains": sorted(real_domains),
+        "authority_score": authority_score,
+        "has_official": has_official,
+        "has_tier1_wire": has_wire,
+        "verification_tier": tier,
+    }

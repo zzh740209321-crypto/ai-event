@@ -285,8 +285,9 @@ class LiteLLMClient:
             "do NOT predict future prices. Return strictly ONE JSON object with keys: "
             "attribution_zh (one Chinese sentence), confidence (0.0-1.0), "
             "verdict (exactly one of ATTRIBUTED, EX_POST_REPORT, NO_CLEAR_NEWS, MIXED). "
-            "Rules: only use the provided candidate news; never invent facts, numbers, or sources. "
-            "If news was published after the jump start, treat it as a after-the-fact report and say so. "
+            "Rules: only use the provided candidate news and market tape/macro context; never invent facts, numbers, or sources. "
+            "Distinguish pre-jump drivers (事前) vs post-jump/close market wraps (事后解释). "
+            "If the move is a sector/profit-taking giveback of a prior-session surge while other sectors/Dow rose, state that clearly instead of calling it a broad market crash. "
             "If evidence is weak or only technical/liquidity explanations fit, set verdict to NO_CLEAR_NEWS "
             "and write: 未找到明确新闻，可能为流动性/清算/技术面. Do not force a story."
         )
@@ -299,7 +300,7 @@ class LiteLLMClient:
                     json={
                         "model": self.model,
                         "temperature": 0.1,
-                        "max_tokens": 220,
+                        "max_tokens": 300,
                         "response_format": {"type": "json_object"},
                         "messages": [
                             {"role": "system", "content": system_prompt},
@@ -317,7 +318,8 @@ class LiteLLMClient:
                 resp.raise_for_status()
                 data = resp.json()
                 usage = data.get("usage", {})
-                parsed = json.loads(data["choices"][0]["message"]["content"])
+                raw_c = _strip_json_fence(data["choices"][0]["message"]["content"])
+                parsed = json.loads(raw_c)
                 verdict = str(parsed.get("verdict", "NO_CLEAR_NEWS")).upper()
                 if verdict not in ("ATTRIBUTED", "EX_POST_REPORT", "NO_CLEAR_NEWS", "MIXED"):
                     verdict = "NO_CLEAR_NEWS"
@@ -357,60 +359,174 @@ class AttributionLLMResult:
 class FactCheckResult:
     status: str  # "VERIFIED" | "DISPUTED" | "UNCONFIRMED" | "SKIPPED_NO_KEY" | "ERROR"
     model: str
+    provider: str = "none"  # "perplexity" | "openrouter" | "none"
+    verification_tier: str = "unverified"  # "confirmed" | "single_source" | "unverified"
     summary: str = ""
     citations: list[str] | None = None
+    independent_sources_count: int = 0
+    key_sources: list[str] | None = None
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    cost_usd: float = 0.0
     raw_error: str = ""
 
 
-class PerplexityFactChecker:
-    """Optional Perplexity Sonar multi-source fact-checking client for high-sensitivity claims (e.g. CEO changes)."""
+def _strip_json_fence(text: str) -> str:
+    s = (text or "").strip()
+    if s.startswith("```"):
+        lines = s.splitlines()
+        if lines and lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        s = "\n".join(lines).strip()
+    return s
 
-    def __init__(self):
+
+class PerplexityFactChecker:
+    """Multi-source online fact-checking client: uses PERPLEXITY_API_KEY first, then optional OpenRouter online model (perplexity/sonar)."""
+
+    def __init__(
+        self,
+        prefer_openrouter_online: bool = True,
+        openrouter_model: str | None = None,
+    ):
         load_openrouter_env()
-        self.api_key = os.environ.get("PERPLEXITY_API_KEY", "").strip()
-        self.model = os.environ.get("PERPLEXITY_MODEL", "sonar").strip()
+        self.pplx_key = os.environ.get("PERPLEXITY_API_KEY", "").strip()
+        self.openrouter_key = (
+            os.environ.get("OPENROUTER_API_KEY")
+            or os.environ.get("LITELLM_API_KEY")
+            or ""
+        ).strip()
+        self.openrouter_base = (
+            os.environ.get("OPENROUTER_BASE_URL")
+            or os.environ.get("LITELLM_BASE_URL")
+            or "https://openrouter.ai/api/v1"
+        ).rstrip("/")
+
+        if self.pplx_key:
+            self.provider = "perplexity"
+            self.api_key = self.pplx_key
+            self.endpoint = "https://api.perplexity.ai/chat/completions"
+            self.model = os.environ.get("PERPLEXITY_MODEL", "sonar").strip()
+        elif prefer_openrouter_online and self.openrouter_key and "openrouter.ai" in self.openrouter_base:
+            self.provider = "openrouter"
+            self.api_key = self.openrouter_key
+            self.endpoint = f"{self.openrouter_base}/chat/completions"
+            self.model = (
+                openrouter_model
+                or os.environ.get("OPENROUTER_FACTCHECK_MODEL")
+                or "perplexity/sonar"
+            ).strip()
+        else:
+            self.provider = "none"
+            self.api_key = ""
+            self.endpoint = ""
+            self.model = os.environ.get("PERPLEXITY_MODEL", "sonar").strip()
 
     @property
     def is_configured(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key and self.endpoint)
 
-    def verify_claim(self, headline: str, target_symbol: str) -> FactCheckResult:
-        if not self.api_key:
+    def verify_claim(
+        self,
+        headline: str,
+        target_symbol: str,
+        session_date: str | None = None,
+    ) -> FactCheckResult:
+        if not self.is_configured:
             return FactCheckResult(
                 status="SKIPPED_NO_KEY",
                 model=self.model,
-                summary="PERPLEXITY_API_KEY not set; multi-source web fact-check skipped",
+                provider="none",
+                verification_tier="unverified",
+                summary="PERPLEXITY_API_KEY and OpenRouter online fallback not configured; multi-source web fact-check skipped",
                 citations=[],
             )
+        date_hint = f" around {session_date}" if session_date else ""
         prompt = (
-            f"Fact-check this financial/corporate claim regarding {target_symbol}: '{headline}'. "
-            "Respond in JSON with keys: status (VERIFIED|DISPUTED|UNCONFIRMED), summary (concise)."
+            f"Verify this financial/market event or attribution for {target_symbol}{date_hint}: '{headline[:500]}'. "
+            "Check official sources (SEC filings, company newsroom) and independent Tier-1 news wires (Reuters, AP, Bloomberg, WSJ, CNBC). "
+            "Return strictly ONE JSON object with keys: "
+            "status (VERIFIED|DISPUTED|UNCONFIRMED), "
+            "independent_sources_count (integer count of distinct authoritative outlets), "
+            "authority_tier (official|tier1_multi|single_tier1|unverified), "
+            "key_sources (array of up to 4 outlet/source names), "
+            "summary (concise 1-2 sentences in Chinese noting what is confirmed and exact move/driver if applicable)."
         )
         try:
             resp = requests.post(
-                "https://api.perplexity.ai/chat/completions",
+                self.endpoint,
                 headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
                 json={
                     "model": self.model,
                     "temperature": 0.1,
+                    "max_tokens": 320,
                     "messages": [{"role": "user", "content": prompt}],
                 },
-                timeout=20,
+                timeout=28,
             )
             resp.raise_for_status()
             data = resp.json()
-            text = data["choices"][0]["message"]["content"]
-            citations = data.get("citations", [])
+            msg = data["choices"][0]["message"]
+            text = _strip_json_fence(msg.get("content") or "")
+            citations: list[str] = list(data.get("citations") or [])
+            for ann in msg.get("annotations") or []:
+                if isinstance(ann, dict) and ann.get("type") == "url_citation":
+                    u = (ann.get("url_citation") or {}).get("url")
+                    if u and u not in citations:
+                        citations.append(u)
             parsed: dict[str, Any] = {}
             try:
                 parsed = json.loads(text)
             except Exception:
-                pass
+                # Try locating first JSON object substring
+                m_start = text.find("{")
+                m_end = text.rfind("}")
+                if m_start >= 0 and m_end > m_start:
+                    try:
+                        parsed = json.loads(text[m_start : m_end + 1])
+                    except Exception:
+                        parsed = {}
+            status = str(parsed.get("status", "UNCONFIRMED")).upper()
+            if status not in ("VERIFIED", "DISPUTED", "UNCONFIRMED"):
+                status = "UNCONFIRMED"
+            ind_cnt = int(parsed.get("independent_sources_count") or len(citations) or 0)
+            auth_tier = str(parsed.get("authority_tier") or "").lower()
+            if status == "VERIFIED" and (ind_cnt >= 2 or len(citations) >= 2 or auth_tier in ("official", "tier1_multi")):
+                v_tier = "confirmed"
+            elif status == "VERIFIED":
+                v_tier = "single_source"
+            else:
+                v_tier = "unverified"
+            usage = data.get("usage") or {}
+            pt = int(usage.get("prompt_tokens", 0))
+            ct = int(usage.get("completion_tokens", 0))
+            raw_cost = usage.get("cost")
+            if raw_cost is not None:
+                cost_usd = float(raw_cost)
+            else:
+                # Perplexity sonar catalog fallback: $1/1M in+out + $0.005/search
+                cost_usd = (pt + ct) / 1_000_000.0 + 0.005
             return FactCheckResult(
-                status=str(parsed.get("status", "UNCONFIRMED")).upper(),
+                status=status,
                 model=self.model,
-                summary=str(parsed.get("summary", text[:300])),
-                citations=citations,
+                provider=self.provider,
+                verification_tier=v_tier,
+                summary=str(parsed.get("summary", text[:320])),
+                citations=citations[:8],
+                independent_sources_count=ind_cnt,
+                key_sources=[str(x) for x in (parsed.get("key_sources") or [])[:5]],
+                prompt_tokens=pt,
+                completion_tokens=ct,
+                cost_usd=round(cost_usd, 6),
             )
         except Exception as exc:
-            return FactCheckResult(status="ERROR", model=self.model, raw_error=str(exc), citations=[])
+            return FactCheckResult(
+                status="ERROR",
+                model=self.model,
+                provider=self.provider,
+                verification_tier="unverified",
+                raw_error=str(exc)[:220],
+                citations=[],
+            )
