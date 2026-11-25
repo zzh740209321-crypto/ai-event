@@ -52,12 +52,25 @@ The alias names must exist in the gateway `model_list`. See `configs/litellm_con
 
 ## 3. Production Go + go-zero Service Mapping
 
+The product is **anomaly-first**: session-aware price moves are detected first, then news in the event window is scored and attributed. The system does not forecast prices. Full design (flow, Kafka topics, Redis/TiDB, Nacos including LiteLLM aliases, APIs, mermaid) is in [docs/architecture.md](docs/architecture.md). The interactive report is the same Page: [architecture and measured results](https://cursor.com/canvas/store-a2570073-d912-4e05-bcf0-9f6b2ef5bdfa/6576dd5b-a1a0-422b-9b63-5dc4f17858c8).
+
+Daily attribution CLI:
+
+```bash
+python3 run.py --hotlist --market us --date 2026-11-24
+python3 run.py --hotlist --market crypto --date 2026-11-24
+python3 run.py --hotlist --market all --date 2026-11-23
+```
+
 | Python MVP Module | Production Go (`go-zero`) Service | Responsibility |
 |---|---|---|
-| `sources/*`, `streaming.py` | `ingest-job` + `ingest-rpc` | Low-latency conditional pollers (`ETag`/`304`), rate-limit/circuit breaking, Kafka `raw_news` producer |
+| `sources/*` (incl. `market_rss.py`, `google_news.py`), `streaming.py` | `ingest-job` + `ingest-rpc` | Market-wrap RSS, targeted + auto Google News, SEC/Newsroom/CMS, crypto RSS; ETag/304; Kafka `raw_news` |
 | `entity_mapper.py` | `entity-rpc` | Ticker/alias/CIK/ecosystem dictionary (Nacos hot-reload) -> Kafka `normalized_news` |
-| `dedup_cluster.py` | `dedup-cluster` (Kafka consumer + RPC) | Redis URL/title Bloom/Set dedup + SimHash/MinHash LSH rolling 48h clustering -> `clustered_events` |
-| `classifier.py`, `scorer.py` | `classify-score` (Kafka consumer + LLM RPC) | OpenAI-compatible LLM classification, verification status, cross-market transmission & 0-100 scoring -> `scored_events` |
-| `market_data.py` | `price-reaction` (Kafka consumer + cron) | Binance/Market Klines alignment (`+1h/+4h/+24h` abnormal return & z-score) -> TiDB `price_reactions` |
-| `exporter.py` | `timeline-api` (go-zero REST API) | Research & post-mortem query API over TiDB + Redis hot cache |
-| `streaming.py` (Signal Bus) | `push-gateway` | Consumes `scored_events` for sub-minute Webhook / WebSocket / internal signal bus push |
+| `dedup_cluster.py` | `dedup-cluster` | Redis URL/title Bloom + SimHash/MinHash LSH, 48h clustering -> `clustered_events` |
+| `classifier.py`, `fast_classifier.py`, `scorer.py`, `llm_clients.py` | `classify-score` | jev/decision ONNX gate, then LiteLLM label alias; verification + transmission score -> event store / `scored_events` |
+| `market_data.py`, `hotlist.detect_sessions` | `kline-ingest` + `session-calendar` | Binance/Yahoo klines; US ET regular session + overnight gap; crypto UTC+8 |
+| `hotlist` anomaly detection | `anomaly-detect` | Daily return, z-score, 15m/1h jump windows -> Kafka `anomaly_windows`, Redis `anomaly:{date}` |
+| `hotlist` scoring / common-factor / contrarian | `attribution-rpc` | Window candidates, rule scores, threshold selection, LiteLLM attribution + fact-check -> `attribution_results` |
+| `streaming.py` (Signal Bus) | `push-gateway` | Minute-level Webhook / gRPC Stream / WS of anomalies and attributions |
+| `market_data.py`, `evaluator.py` | `price-reaction` | Display-only `+1h/+4h/+24h` abnormal returns (never used in scoring) |
+| `exporter.py`, `outputs/attribution_*.md` | `timeline-api` | Research timeline and `GET /v1/attribution` review board |
