@@ -9,73 +9,70 @@
 
 加密窗口取跳变起点前 6h 至后 1h；美股窗口取前 16h 至后 9h；晚于跳变的新闻均标记为「事后解释/报道」并降低时间权。
 
-## 2026-11-23（market=us，输出时间 UTC+8）
+## 2026-11-24（market=us，输出时间 UTC+8）
 
-生成时间：2026-11-25 09:38 UTC+8
+生成时间：2026-11-25 09:48 UTC+8
 
 ### 会话行情切片（含非异动对照）
 
 | 标的 | 开盘 (UTC+8) | 收盘 (UTC+8) | 隔夜跳空 | 会话涨跌 | z | 上一会话涨跌 / 回吐 |
 | --- | --- | --- | ---: | ---: | ---: | --- |
-| NVDA | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +32.79% | +31.32% | +7.59 | -13.84% |
-| SMH | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +17.48% | +15.18% | +3.25 | -10.73% |
-| SOXX | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +15.24% | +13.66% | +2.55 | -10.60% |
-| QQQ | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +7.53% | +6.69% | +2.74 | -5.43% |
-| SPY | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +4.84% | +4.56% | +2.79 | -3.48% |
-| DIA | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +2.69% | +3.00% | +2.06 | -1.94% |
-| AAPL | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +1.49% | +2.05% | +1.14 | -1.84% |
-| MSFT | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +4.34% | +1.64% | +0.67 | -2.64% |
-| TSLA | 2026-11-23 22:30 UTC+8 | 2026-11-24 04:30 UTC+8 | +8.29% | +11.47% | +2.85 | -7.55% |
+| NVDA | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -3.28% | -5.94% | -0.69 | +31.32%（回吐约 19.0%） |
+| SMH | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -4.15% | -7.26% | -1.23 | +15.18%（回吐约 47.8%） |
+| SOXX | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -4.60% | -8.29% | -1.33 | +13.66%（回吐约 60.6%） |
+| QQQ | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -1.67% | -1.96% | -0.67 | +6.69%（回吐约 29.3%） |
+| SPY | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -1.00% | -0.50% | -0.25 | +4.56% |
+| DIA | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -0.43% | +0.82% | +0.50 | +3.00% |
+| AAPL | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -0.45% | +1.25% | +0.68 | +2.05% |
+| MSFT | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -0.51% | +0.64% | +0.26 | +1.64% |
+| TSLA | 2026-11-24 22:30 UTC+8 | 2026-11-25 05:00 UTC+8 | -0.51% | -0.31% | -0.07 | +11.47% |
 
 ### 同会话宏观/利率（相对上日美股收盘）
 
-- **DXY**（`DX-Y.NYB`）：103.859 → 104.344（+0.47%，盘中 +0.14%）
-- **US10Y**（`^TNX`）：4.912 → 4.918（+0.12%，盘中 -0.61%）
-- **US05Y**（`^FVX`）：4.701 → 4.728（+0.57%，盘中 -0.78%）
+- **DXY**（`DX-Y.NYB`）：104.344 → 103.826（-0.50%，盘中 +0.04%）
+- **US10Y**（`^TNX`）：4.918 → 4.904（-0.28%，盘中 -0.08%）
+- **US05Y**（`^FVX`）：4.728 → 4.712（-0.34%，盘中 -0.02%）
 
 ### 共同因子
 
-- **equity_common**（2026-11-23 22:30 UTC+8，方向 UP）：NVDA +31.32%、TSLA +11.47%、SMH +15.18%、SPY +4.56%、QQQ +6.69%、SOXX +13.66%、DIA +3.00%、MSFT +1.64%、AAPL +2.05%
-  - 归因：英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。（置信度 0.95，判定 ATTRIBUTED）
-  - 在线核查（`openrouter/perplexity/sonar`）：**unverified** (ERROR) —  
-  - 候选原因：**黄仁勋复职与董事会/治理风波**（事前或同步，归因分 1.0318，**confirmed**，独立源 15，权威 1.0）— NVIDIA Board Reinstates Jensen Huang as President, CEO and Board Director [NVIDIA Newsroom](https://nvidianews.nvidia.com/news/nvidia-board-reinstates-jensen-huang-as-president-ceo-and-board-director) / [CBS News](https://news.google.com/rss/articles/CBMickFVX3lxTFBEZ2IzdVdRZFN3QXJ4djZjWVZBcEtKWURLaGhwaG4xNzUyV3dXMXJtdktYUlNMaHo2eWtEdHNIeUhXLVpZaEV1dVRvd1pPaGpNelY4aERWQ1NZblk5cVdzOHpZbVFhRk9IcUlMamI5MnNLZw?oc=5)
-  - 候选原因：**Stock Market Today: Dow, S&P 500, and Nasdaq Surge as Nvidia**（事前或同步，归因分 0.8183，**unverified**，独立源 2，权威 0.55）— Stock Market Today: Dow, S&P 500, and Nasdaq Surge as Nvidia Leads a Major AI Rebound [24/7 Wall St.](https://news.google.com/rss/articles/CBMiwwFBVV95cUxOQ3RqNWFVcFdnMkhKYUp6NWlwR2MzQTZfSG9xb0NKZlhHY2xGVFFpOS1SS2Q0WVM1U0swSkluQmtEakZFRmdwYkV0RnR2VjVpMktWR0MxY1ZxRFY3akhicGRINUdkVzl6Vm5YOU80bW51d3owc0VQazMzX3dNekRWekV6VFJWMGR0RjVSY1hEenhsVXNtZEVfU0V5YXZaaktka1IyenpFbTBabXZqRGtmaWpXbXFmU1VQbGtKYUx0enlXbjQ?oc=5) / [Coinpaper](https://news.google.com/rss/articles/CBMimgFBVV95cUxOczRlU2MySEY5bkZvWG4xTDJBVXpsQnlhcGZ1MTZvTWZRV3dtNWM3X0dhYzN4ZGk0a2lVMzJZbk5GMk1DUzdnaG1xVmJ4TWl2RklOYklWZE5Uc01NakdkczNRam9sVVFYcVh5aU8xTWlOUm1sVVFyLTFuX01MLXVmZGtWcmd3bGxfaGlaU1IzN1VWdFphaEJoNmt3?oc=5)
-  - 候选原因：**NVDA SEC Form 4 Filing**（事前或同步，归因分 0.7809，**confirmed**，独立源 1，权威 1.0）— NVDA SEC Form 4 Filing [SEC EDGAR](https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nvda-20261122.htm) / [SEC EDGAR](https://www.sec.gov/Archives/edgar/data/1045810/000169684126000016/xslF345X06/wk-form4_1795470863.xml)
-  - 候选原因：**AI 资本开支回报与估值/个股情绪**（事前或同步，归因分 0.7694，**unverified**，独立源 3，权威 0.55）— Stock Market Today: Dow Jones, S&P 500, Nasdaq 100 Futures Rise After ANT IPO and Friday’s AI Rout— ORCL [Benzinga](https://news.google.com/rss/articles/CBMi7wFBVV95cUxOQkdKYWdvMkZIcGM5V3dMbjEwem4yRmhpVVZ6S2dPRnBLUzh3SFdUMmNEdW84NDZVZDJfV0NJU0Z3WmFLNWh5eC1Ba0dxb0tBcXhxN0ZkdTZwU19hNjdGX0t5Q3h6LVFIOTdEQnZHaGVnM19HMDRpQ3p6TDl1LXR0QWxpRHBxMmZJZjl0OHRwM09FNEJMS1J5aGhYdTZ1M2pXNzF4WE1ZZjZfZjZhbmd6ZWppdUQ2ZGtVYXlLNnVIdGNZZURIYWxwdUUwT1ltTHZPT21CZ1l2ZGtRcFlTeHJSc2tqOHhaUjAwMkhvMGRmOA?oc=5) / [TradingView](https://news.google.com/rss/articles/CBMijwJBVV95cUxQS3dqVGdkQThqOEJyU25NdFNJb0xmaHVLSnotanRMc3ktZkV2TkdJbnlsZEVxc2ZUdzNxM1VKeDQtMDlQaFYxSDd5UHZsTFd3OFhSUnZabERuRUtBQm94WWJDYS1Gd20xcEg0MHFDMUZVN2FGSGpYREJvYkJHMTk2OW1LcWR6ZkxjZi1ZUWNITl9MMlA1Yl9BRzh6TzhnMzJ3b1hqLWVhcThBMlhiNUxteTJWei1UTE5YczVuSFlNTjRmTmFKVmFfekVUQWhNS09oT1F6SDFSbDlXb0ItcFljaEYyZDlDYll2Vm4zdDR4eXNnMVl6TkJDQ2FzQ2dMUG5ZTnpoWklxbWQyck4wUzQ0?oc=5)
-  - 候选原因：**美联储利率 / PCE / 通胀预期**（事前或同步，归因分 0.763，**single_source**，独立源 2，权威 1.0）— COMMENTARY: AI bubble burst could put Fed rate cuts on the table [Reuters](https://news.google.com/rss/articles/CBMitAFBVV95cUxOeUxld0JxUDNGX2hDTXg0REFBSFoyWWRXbWcwdUtLMTJmOEJMbl94TG1zSHIwN2hKUUxOWWVFUy12dnlYNGpCVnBoejVLbTRZY1RrdjVCT2UyczA5WkUwUnRJQWZHOHU0ZjFHT1JBWHJSbGZkNmJEaWN5ODViNW5JYm02ekhBNDlXRzB2TG1yWVRHWGdma3F3SmRXU1BVWVVRZ3JDNTVfOThnWnVGdzMzdzA1bXI?oc=5) / [TradingView](https://news.google.com/rss/articles/CBMi-AFBVV95cUxOTUdTYXZNUzl6WS1oYmRSWHpHRDBUbHBwdGF6Ym84QjZfd0xHVXNTNHdqUUNaVEpUblBHRUJQcFRRVGRjOEQyd1h4OS1oN1pXSzRzNDA4RzJEXzNSaDFZcHMtTlNFeUJObXo5d3o4M3AzXzNrQ0xGWFJBd3hRazE1LXBTOFF3eHhQQ3Q4X0x3eGhmbk4wQ0VCS3M4aEpHVzlyUEJDTTNPNkFOX0hkcVRzVnNPY3d2bXktRjl0bVBoU21meV9TVWJ6YUsxZ04xWDRjSkZEU1lxY3RSQmU2YktoU3BxdkhuT01iMDF3MW9IWEw0ZENKeFc3LQ?oc=5)
+- **equity_common**（2026-11-24 22:30 UTC+8，方向 DOWN）：SOXX -8.29%、SMH -7.26%、NVDA -5.94%、TSLA -0.31%
+  - 归因：英伟达（NVDA）股价下跌8.29%，拖累了半导体板块（SOXX, SMH）以及其他AI相关股票，此前有报道称美国准备提高对中国和其他国家的关税，同时市场对英伟达的治理问题和AI资本开支回报的担忧也加剧了抛售压力。（置信度 0.85，判定 ATTRIBUTED）
+  - 在线核查（`litellm/perplexity/sonar`）：**confirmed** (VERIFIED) — 已确认2026-11-24（ET）SOXX、SMH、NVDA、TSLA整体偏下跌，核心市场驱动是AI/芯片股在前一交易日因Jensen Huang回归引发暴涨后迅速回吐，Reuters与AP均写到“sugar high quickly disappears”，并指出Nvidia当日回落约5%至6%。24/7 Wall St. 对“Jensen Huang Could Still Be Kicked Out, Nvidia Could Still Fall 40%”的说法提供了额外情绪/估值压力线索，但更强的直接驱动仍是Huang回归后AI交易降温、关税与贸易摩擦预期及AI资本开支回报/估值担忧。 [来源: https://www.sun-sentinel.com/2026/11/24/tech-stocks-wall-street-huang/, https://www.newspressnow.com/news/world_news/tech-stocks-wane-a-day-after-a-huang-rally-as-anthropic-tumbles-below-its-initial/article_37137bbd-4359-5723-9dc5-750d4ef013ff.html, https://indianexpress.com/article/world/global-market-today-live-updates-nikkei-225-dow-jones-kospi-vix-tsx-world-stock-markets-latest-news-10974572/?ref=rhs_live_blog_fitness]
+  - 候选原因：**黄仁勋复职与董事会/治理风波**（事前或同步，归因分 0.8363，**confirmed**，独立源 2，权威 0.76）— Jensen Huang Could Still Be Kicked Out, Nvidia Could Still Fall 40% [Yahoo Finance](https://news.google.com/rss/articles/CBMinAFBVV95cUxNZWdFbVNuLWc3TE12ekl6dmVhd3dnSEtLb1BlRTQ1WTFTemFzTTF5Tm5nQVQtcWVVZTBIajFQcGlFenF4Qi1zV09nRTdZOFhaSFh2UWZtRklzUzJrV1NrN3ZDT284R1dBYTc3andOVnUteHZEMXNZTldtcHU4a3lJdVhYTVJZMGdSX2V6TFRZb0tMMEVpcVQ2dEh2d24?oc=5) / [CBS News](https://news.google.com/rss/articles/CBMibEFVX3lxTFBDRml6SDJKU2FyY29rV1BYb3BsTVEwRUUxUndsbEF3QmdIYXZOMWQ3YnJaUVZHa09SVzZ3RjRYWVdMRmxWSGdrNm9wQ2ZVcUZYcUc0bWhkNWRhV3pMX05KYlJ1U0djZFdQSlBENw?oc=5)
+  - 候选原因：**关税与贸易摩擦预期**（事前或同步，归因分 0.8294，**confirmed**，独立源 10，权威 1.0）— Exclusive | U.S. Prepares to Raise Tariffs on China and Other Countries [WSJ](https://news.google.com/rss/articles/CBMiowFBVV95cUxPblRKZFY1SDBYYTNwNWlxcjFqNFdGMmpQdXc3RzEyb0NoWHE3MmZoX3hBMmdnR0doa3JUUmhoN2xaUTR6dUVuajlkX19tZmN3ZHFOTUNkWnJmV3RVaThzRXVWbXZlNWVpb3k1WmNzOFRYUDRCTjg1S1g3YTRaMDZMT3lhVm8wM3VHdG1BaWlvTTZNY2JNMlR1aHNzV3RyQVk5MW44?oc=5) / [FXStreet](https://news.google.com/rss/articles/CBMiqgFBVV95cUxQWW02Mzc3ZzZDb0c1LXNLQlVQbi1JUVVQU0Q3UHRma2NlMHFzNzFJZ1lteUM4dGxDeTNNUkJ4dXdxcUlUX3FOQmxzT053OTRfaGtCODFSbVRfbW81TjUycEpSZUhvYThiX0ZrLXBmdTFzZ3Z6OVdFeXFGMnBCT21ob3lrOUNCdWt3SjdhZHN5ck1MSW1sdkI2ZkJEZDl2dDFUdzhyTl9iTU5RQQ?oc=5)
+  - 候选原因：**Wall Street's sugar high quickly disappears as Nvidia and ot**（事前或同步，归因分 0.7882，**unverified**，独立源 3，权威 0.55）— Wall Street's sugar high quickly disappears as Nvidia and other AI stocks tumble again [Yakima Herald-Republic](https://news.google.com/rss/articles/CBMioAJBVV95cUxNd2w5SGxhRFFtcU5FOHNVbFMwaG5INm9peWVLeHd1UFlpcWZHbW1QczJxYjkxNnVoZFMyVUppVFYyZmcyV211MzB0d2lzeFQxM3ZMbFJsSGp3UGItUzhfRUlSbkRab05IWEZrdjZvTGt4d0E2YnJWa3BNSy1QbDVxdktNajN6N0VoMElRaThpVE9xQTRPV21IWnZ1bzZTclBaekduMzVhY0JyVlpCWG9COE1MRmg5ZDBGU0dlOElWQ1VhUzU0VzhnZFJIUUhiZ1hkT0sxeFh5dzhLQUk4aWNrMGhZWmd3SzRXZUZLQ0hDeWhSd1JMNmQzR09uTnFrREVZUHcxWlFBWGh1VE1ZZXRTTXE4Vk0xZkM5WTlpTXlCSDDSAaYCQVVfeXFMTzhWenhWR3FBV2g4MEJ1YU4zSTZjZldhRFc0TnFROWlrMXVTMzNkVGU2Q0lVR0htYUVlNHNuWkpqSUZrSEsybEktUzJoVzJwOXZVS3ByZXRkM2hTOFlBZ2VrQ291eFRNM1dQVDJtQTNFX2dnY0RURm84TnFhd3EzZ2R6Q2t6SG9yTHdCWEtoYnJyaXUzSXlkRWMxaF9VaTBaUkdtYmZqcHFWLURWWmsyOVMzT2JPMi1hRGJOdmtLTUhyZlhCMklyLXVZa1dhLWl4alF2Z2t4cXd3YlhlOGJkME9ISmJQOXdTOVdzTXY5eldHYnUxUVJ6cmw3bFQ2c1NwWFpVemwzbWkxb2RWQUxOUDJRNEpHaVBJcGo3RHU3U19qeGxoTEJR?oc=5) / [Union-Bulletin](https://news.google.com/rss/articles/CBMiiAJBVV95cUxNY0dyN3BBT1BOM3JDMHUzS1o2WWlsOXh6WFJBa256elB2Nk1pWjByVzFrN0FHRk5VTWo2a3VUX29qdkFxYmZSR0F2RWRJYXpfaEpmN0JMUjNZOFpUcjZpOEZ0XzBMcUFMMGxQSmlpaHpSNEUwOWFLRE9ycmpOdVlFWVpNN1RXXzlyaW9xT1lkQnZJV1ozSUZhUE1SdVl6MXJvczJkOGRta2lMWEplcW9zM25tZE0xa2JEUWdLcU1CSV9Tc3gyWENYeFhvUkJvZkdhb3JaV0VQRk9hYUJINmRNODAtczZUZXNBZ21IREU0TktrdUFpeVlKM3ZxV2NqU3l0LVZ0Y19kTFg?oc=5)
+  - 候选原因：**AI 资本开支回报与估值/个股情绪**（事前或同步，归因分 0.785，**single_source**，独立源 6，权威 0.76）— Drops for Nvidia, Anthropic and other AI stocks drag the US market back down [Yahoo Finance](https://news.google.com/rss/articles/CBMipAFBVV95cUxNdUVCY3pFVVBDUEwtWGlWa1ViLWE4eE9XeHk2R0s3MC1MSUpNblB6ZFZ5bmJPX0tXcGd2bk5FcVZHbW9oU3FNT2FwMzF4S05jNXlVRjBzZExNYWJ3ako5X24yVDhySHhnUU1HaGFxMUdjTGZsRHc0ZE1oREpqcjJoTHBORzdyWHRGXzhxbllTQ1pHc1hCdS1QVG9sSS1Gb3pkbkZVYw?oc=5) / [Tri City Record](https://news.google.com/rss/articles/CBMi6AFBVV95cUxOR2FlRzBRN1pxdldfcUFFcHFWMDBPMHhVRm5NOEVNTHNkckNWclRienhPRDcwb29WbW1RQlJBaGtiY1pwcjltMy1MbmVyQ2VBeXRTWEdDbVVCODI1eDZpYlF4YlJfT1NVMGVzaV83Ui1OMGlqYkpMaDFIVWpnOUctMER4SXM4bjROMWdFODcyejQ1MURNNkJwdWtOcnJzdUE2dGZYRndJc19QZURtZTlnVUx5d2RXZzlodzB4YjV2dlFGVHdxZTY4YllCcGQ2akJ5ZUFTMko4WWpscGVLa3A4Yjhvdk5NR0hT?oc=5)
+  - 候选原因：**Trump Administration Imposes Sanctions on Megaspeed, Singapo**（事前或同步，归因分 0.7645，**single_source**，独立源 1，权威 0.89）— Trump Administration Imposes Sanctions on Megaspeed, Singaporean Firm at Center of Nvidia Scandal [NYT Business](https://www.nytimes.com/2026/11/23/business/trump-administration-megaspeed-trade-blacklist-nvidia.html)
+  - 候选原因：**Sen. Kevin Cramer on Nvidia fallout: National security remai**（事前或同步，归因分 0.7406，**single_source**，独立源 1，权威 0.88）— Sen. Kevin Cramer on Nvidia fallout: National security remains the top priority for me [CNBC](https://news.google.com/rss/articles/CBMixgFBVV95cUxNb05NLXdjUDBPWS00ZXNKWHhib3Y0Z0hLbURtal94Y18zZGZBTHBsR24xTF9tRlJwa3Z2UEZoUkxQek5NYV9iS3hVa0YzUTVjNEVHVmprWGVnY1FMbjB2MldaSW4xcTFVWG54aGt6RkNVbDZINThkRWlZYjNzTjFKTGFWVDR2MjM1N1pSd0E2YkVRZ2U3ZGFNekplaUFGUzlxQ0ZHajJlTEl2WHY5SG13Y0NibXplWGVhRU5XdFBHRkwwNFZHLXc?oc=5)
+  - 候选原因：**2 men arrested over suspected burglary at Prince William and**（事前或同步，归因分 0.7373，**confirmed**，独立源 2，权威 1.0）— 2 men arrested over suspected burglary at Prince William and Kate’s country home in eastern England [AP News](https://news.google.com/rss/articles/CBMirgFBVV95cUxNbDFDTW1TUFhMbEpWOGpMcmdyUTBvQ2txZUMya2psZUhSSDNvNGdRT2tKVWpWMWs3eDZ2WmZ1NjRLYUVYVjdfb043WFJXQ3FSN0psUnN5QVU3Q1h6R3hNTWd5SzJJTl9JTTN5b09UUUNxMEF4aWI4ZkhZTXZaMXQweGhRczM5R2l2QmJoZTE4cXhfdlJzYmIwRi1mZ2d1QWZzMFhIQ1NwU2FrRXYwQ0E?oc=5) / [Reuters](https://news.google.com/rss/articles/CBMipgFBVV95cUxNV0V1ZHE1aUdudllkOFRrWUItdnlzMUhuLXdLZVBjS3Q0LURKbFpOOWVIVWhwMkFWV2JWb0tub2s3dERMeE9ua0JfS05aQkZORWw3bEFydDEyZDlPaVcyNlhmT1J4alhST25la0pPVGt1d3pzYzJNVU1tazJ6V1kzejV0bzBpTW56OWF6M1UwVWhkVm5kdXRDWWFxdjFPUDlmYlkwcHd3?oc=5)
+  - 候选原因：**Bitcoin Falls as NVIDIA Selloff Hits Miners with AI Exposure**（事前或同步，归因分 0.7334，**unverified**，独立源 1，权威 0.55）— Bitcoin Falls as NVIDIA Selloff Hits Miners with AI Exposure [Analytics Insight](https://news.google.com/rss/articles/CBMinwFBVV95cUxNN2ZzRjJPaTBYdWRraUJfQTZlNGNKNkRNMkozbnREbDRqQWc1Ty1nSlFSRUVFME5OVkhlZEdTaWZMWG9tYU1LR0gzazEybVhHR1MxRUoxd1FLMG5OVmtqbVJUaEx1YmpsNTRRUXliWGRiTGE1aHU0Q0FwLWw5bUVkNXY5dFB0U2ZLZGRyUl90emhESTRaMF9BRThMMkdmM03SAawBQVVfeXFMTW05dWRrRjMza25MaWg3T3FfODdpZThGTFYzQ09IN0dXRXdCQ0MxSmMtbnVfVmdQcTdnNlZ2dUpFVnZqYVhxb2s1Ny1HQ3ZyT0xFSDdfVzFxZEpTY0FRTFluVTc5dkMwNDZhV25QRWQxMWJwYVMyUGhzMWNRb1RrWC05MXQ0YTRGNl9ib1RIM0xYMEE2SlhfZ2pZbWliUm1RR19xQ2tJTGhfVkZZbA?oc=5)
 
 ### 标的异动（按异动程度）
 
 | 标的 | 当日涨跌 / z | 异动窗口 (UTC+8) | 主因归因 | 置信度 | 时效 | 自动核验 (tier / 独立源 / 权威) |
 | --- | --- | --- | --- | --- | --- | --- |
-| NVDA | +31.32% / +7.59 | 2026-11-23 22:30 UTC+8  窗口 +35.14% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| TSLA | +11.47% / +2.85 | 2026-11-23 22:30 UTC+8  窗口 +11.22% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| SMH | +15.18% / +3.25 | 2026-11-23 22:30 UTC+8  窗口 +15.15% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| SPY | +4.56% / +2.79 | 2026-11-23 22:30 UTC+8  窗口 +3.79% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| QQQ | +6.69% / +2.74 | 2026-11-23 22:30 UTC+8  窗口 +5.79% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| SOXX | +13.66% / +2.55 | 2026-11-23 22:30 UTC+8  窗口 +11.89% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| DIA | +3.00% / +2.06 | 2026-11-23 22:30 UTC+8  窗口 +2.22% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| MSFT | +1.64% / +0.67 | 2026-11-23 22:30 UTC+8  窗口 +3.50% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
-| AAPL | +2.05% / +1.14 | 2026-11-23 22:30 UTC+8  窗口 +1.26% | 英伟达股价大涨31.32%，主要受黄仁勋复职担任CEO及董事会治理风波消息的推动，同时AI板块整体反弹也提振了市场情绪，尽管宏观利率环境略有收紧。 | 0.95 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=28, 1.0) |
+| SOXX | -8.29% / -1.33 | 2026-11-24 22:30 UTC+8  窗口 -6.16% | 英伟达（NVDA）股价下跌8.29%，拖累了半导体板块（SOXX, SMH）以及其他AI相关股票，此前有报道称美国准备提高对中国和其他国家的关税，同时市场对英伟达的治理问题和AI资本开支回报的担忧也加剧了抛售压力。 | 0.85 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=32, 1.0) |
+| SMH | -7.26% / -1.23 | 2026-11-24 22:30 UTC+8  窗口 -5.64% | 英伟达（NVDA）股价下跌8.29%，拖累了半导体板块（SOXX, SMH）以及其他AI相关股票，此前有报道称美国准备提高对中国和其他国家的关税，同时市场对英伟达的治理问题和AI资本开支回报的担忧也加剧了抛售压力。 | 0.85 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=32, 1.0) |
+| AAPL | +1.25% / +0.68 | 2026-11-24 22:30 UTC+8  窗口 +0.77% | 当日逆势于SOXX、SMH、NVDA、TSLA的DOWN行情，未找到该标的自身明确且方向一致的新闻，可能为板块轮动/个股分流。 | 0.45 | 逆势于DOWN | CONTRARIAN / 未套用板块叙事 |
+| NVDA | -5.94% / -0.69 | 2026-11-24 22:30 UTC+8  窗口 -6.25% | 英伟达（NVDA）股价下跌8.29%，拖累了半导体板块（SOXX, SMH）以及其他AI相关股票，此前有报道称美国准备提高对中国和其他国家的关税，同时市场对英伟达的治理问题和AI资本开支回报的担忧也加剧了抛售压力。 | 0.85 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=32, 1.0) |
+| TSLA | -0.31% / -0.07 | 2026-11-24 23:00 UTC+8  窗口 -2.72% | 英伟达（NVDA）股价下跌8.29%，拖累了半导体板块（SOXX, SMH）以及其他AI相关股票，此前有报道称美国准备提高对中国和其他国家的关税，同时市场对英伟达的治理问题和AI资本开支回报的担忧也加剧了抛售压力。 | 0.85 | 含事前驱动 + 盘中/收盘跟进 | confirmed (n=22, 1.0) |
 
 ### 辅助：新闻中心热榜 Top 10（价格不参与排序）
 
 | 排名 | 标题 | 分类 | 热度分 | 核验 | 首发 (UTC+8) | 价格反应（仅展示） |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | NVIDIA Board Reinstates Jensen Huang as President, CEO and Board Director | TECH_AI | 148.094 | confirmed / 官方一手 | 2026-11-23 21:55 UTC+8 | NVDA: 暂无对齐行情 |
-| 2 | Jim Cramer: Jensen Huang’s return is 'so huge' for Nvidia and the AI trade | TECH_AI | 127.583 | confirmed / 多源确认 | 2026-11-23 23:53 UTC+8 | NVDA: 暂无对齐行情 |
-| 3 | Can Jensen Huang Return to Nvidia? | TECH_AI | 124.458 | confirmed / 多源确认 | 2026-11-23 21:19 UTC+8 | NVDA: 24h -10.31% | Ab24h -8.75% | 锚定 169.9899 | 仅展示，不参与排序 |
-| 4 | Wall Street soars on Huang's return to Nvidia, Treasury yields rise | TECH_AI | 121.77 | confirmed / 多源确认 | 2026-11-23 07:44 UTC+8 | NVDA: 暂无对齐行情 |
-| 5 | Nvidia stock jumps as Trump makes U-turn on Jensen Huang | TECH_AI | 114.363 | confirmed / 多源确认 | 2026-11-23 19:34 UTC+8 | NVDA: 暂无对齐行情 |
-| 6 | Nvidia Brings Back Jensen Huang as Its CEO, 11 Days After He Resigned | TECH_AI | 110.038 | confirmed / 多源确认 | 2026-11-23 20:07 UTC+8 | NVDA: 暂无对齐行情 |
-| 7 | Stocks Soar as Huang’s Nvidia Return Fuels AI Bets: Markets Wrap | TECH_AI | 96.251 | confirmed / 多源确认 | 2026-11-23 06:02 UTC+8 | NVDA: 暂无对齐行情 |
-| 8 | President Trump: I was represented at Nvidia's board meeting | POLITICS_REG | 86.6 | confirmed / 多源确认 | 2026-11-23 23:37 UTC+8 | NVDA: 暂无对齐行情 |
-| 9 | Solo bitcoin miner beats the odds to win $191,000 block reward | CRYPTO | 84.667 | single_source / 单一权威（未交叉核实） | 2026-11-23 21:37 UTC+8 | BTC/USDT: 24h -3.90% | Ab24h +0.90% | 锚定 62895.36 | 仅展示，不参与排序 |
-| 10 | AAPL Nov 2026 310.000 call (AAPL261123C00310000) stock price, news, quote and history | TECH_AI | 83.015 | confirmed / 多源确认 | 2026-11-23 23:30 UTC+8 | NVDA: 暂无对齐行情 |
+| 1 | How important are Nvidia and Jensen Huang to the US economy? | TECH_AI | 160.982 | confirmed / 多源确认 | 2026-11-24 00:12 UTC+8 | NVDA: 暂无对齐行情 |
+| 2 | Drops for Nvidia, Anthropic and other AI stocks drag the US market back down | TECH_AI | 144.262 | confirmed / 多源确认 | 2026-11-24 11:31 UTC+8 | NVDA: 暂无对齐行情 |
+| 3 | Nvidia’s stunning U-turn: Why Jensen Huang is back and why critics are alarmed | TECH_AI | 123.598 | confirmed / 多源确认 | 2026-11-24 19:00 UTC+8 | NVDA: 暂无对齐行情 |
+| 4 | 'Awaiting the king's return': Taiwan celebrates Huang's return to Nvidia | TECH_AI | 96.834 | confirmed / 多源确认 | 2026-11-24 15:29 UTC+8 | NVDA: 暂无对齐行情 |
+| 5 | Wall Street analysts scramble to upgrade Nvidia’s stock after Huang’s return | TECH_AI | 94.432 | confirmed / 多源确认 | 2026-11-24 02:11 UTC+8 | NVDA: 暂无对齐行情 |
+| 6 | Jensen Huang Is Back at Nvidia. Here’s What to Know. | TRADFI | 89.59 | confirmed / 多源确认 | 2026-11-24 02:23 UTC+8 | NVDA: 24h -7.23% | Ab24h -6.54% | 锚定 165.165 | 仅展示，不参与排序 |
+| 7 | Why Nvidia Needed Jensen Huang Back—And What His Return Really Changes | TRADFI | 82.143 | confirmed / 多源确认 | 2026-11-24 03:57 UTC+8 | NVDA: 24h -5.88% | Ab24h -5.38% | 锚定 165.185 | 仅展示，不参与排序 |
+| 8 | Nvidia shares fall more than 5% as Huang comeback rally cools | TECH_AI | 80.566 | confirmed / 多源确认 | 2026-11-24 17:12 UTC+8 | NVDA: 暂无对齐行情 |
+| 9 | Nvidia's longtime CFO and now former interim CEO Colette Kress was left in the dark about Jensen Huang's return: Report | TECH_AI | 79.922 | confirmed / 多源确认 | 2026-11-24 17:59 UTC+8 | NVDA: 暂无对齐行情 |
+| 10 | Stock Market News for Nov 24, 2026 | TECH_AI | 79.768 | confirmed / 多源确认 | 2026-11-24 16:08 UTC+8 | NVDA: 暂无对齐行情 |
 
 ## 花费与局限
 
 - 归因 LLM：`google/gemini-2.5-flash-lite`，仅对上榜异动/共同因子的 Top 候选调用。
-- 归因 LLM 调用 1 次（输入 1745 / 输出 87 tokens，约 $0.00021）；在线核查（`openrouter/perplexity/sonar`）调用 1 次（约 $0.00000），合计 **$0.00021**。
-- 实时增量采集：907 条原始新闻 → 516 个簇。
-- 在线核查状态：ERROR（402 Client Error: Payment Required for url: https://openrouter.ai/api/v1/chat/completions）。本地多源/官方核验结论不受影响。
+- 归因 LLM 调用 1 次（输入 2002 / 输出 107 tokens，约 $0.00024）；在线核查（`litellm/perplexity/sonar`）调用 1 次（约 $0.00545），合计 **$0.00569**。

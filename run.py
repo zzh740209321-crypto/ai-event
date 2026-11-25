@@ -31,7 +31,7 @@ def main() -> None:
         "--classifier",
         choices=["auto", "rule", "openai", "jev_onnx", "hybrid"],
         default="auto",
-        help="Classifier backend (jev_onnx = ONNX fast filter, hybrid = ONNX + LiteLLM/OpenRouter)",
+        help="Classifier backend (jev_onnx = ONNX fast filter, hybrid = ONNX + LiteLLM gateway)",
     )
     parser.add_argument("--no-gdelt", action="store_true", help="Skip GDELT DOC API call")
     parser.add_argument("--extra-query", action="append", default=[], help="Extra query as tag::query")
@@ -42,7 +42,7 @@ def main() -> None:
     parser.add_argument("--webhook", type=str, default=None, help="Optional webhook URL for Signal Bus push")
     parser.add_argument("--stream-out", type=str, default="outputs/signal_stream.jsonl", help="JSONL stream output path")
     # LLM labeling for distillation
-    parser.add_argument("--label-with-llm", action="store_true", help="Annotate events using LiteLLM/OpenRouter for distillation")
+    parser.add_argument("--label-with-llm", action="store_true", help="Annotate events using the LiteLLM gateway (LITELLM_MODEL_LABEL) for distillation")
     parser.add_argument("--label-input", type=str, default="outputs/timeline_btcusdt_7d.json", help="Timeline JSON input for --label-with-llm")
     parser.add_argument("--label-out", type=str, default="outputs/llm_distill_labels.jsonl", help="Distillation JSONL output path")
     parser.add_argument("--label-limit", type=int, default=2000, help="Max events to label in --label-with-llm")
@@ -55,7 +55,7 @@ def main() -> None:
     parser.add_argument("--date", type=str, default=None, help="Hotlist date YYYY-MM-DD (ET session date for --market us; UTC+8 date for crypto/all)")
     parser.add_argument("--hotlist-days", type=int, default=3, help="If --date is omitted, number of recent days to include")
     parser.add_argument("--no-fetch-news", action="store_true", help="Skip live RSS/Google News fetch in --hotlist and use local corpus only")
-    parser.add_argument("--no-online-verify", action="store_true", help="Skip Perplexity/OpenRouter online fact-checking in --hotlist")
+    parser.add_argument("--no-online-verify", action="store_true", help="Skip LiteLLM fact-check model (LITELLM_MODEL_FACTCHECK) in --hotlist")
 
     args = parser.parse_args()
 

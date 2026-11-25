@@ -22,7 +22,7 @@ import pandas as pd
 from fin_news_events.classifier import get_classifier
 from fin_news_events.dedup_cluster import IncrementalClusterer
 from fin_news_events.entity_mapper import extract_matched_entities, resolve_target
-from fin_news_events.llm_clients import LiteLLMClient, PerplexityFactChecker
+from fin_news_events.llm_clients import LiteLLMClient, LiteLLMFactChecker, resolve_litellm_model
 from fin_news_events.market_data import fetch_binance_klines, fetch_yahoo_bars
 from fin_news_events.models import MYT, to_myt_str, to_utc_iso
 from fin_news_events.scorer import compute_authority_verification, get_source_credibility, score_event
@@ -157,7 +157,7 @@ class AttributionConfig:
     dir_mismatch_mult: float = 0.40
     common_window_hours: float = 2.0
     news_hotlist_top_n: int = 10
-    llm_model: str = "google/gemini-2.5-flash-lite"
+    llm_model: str = ""  # empty → LITELLM_MODEL_ATTRIBUTION (default gemini-flash-lite)
     max_anomalies_for_llm: int = 10
     max_factchecks_per_day: int = 2
     novelty_lookback_days: int = 3
@@ -1682,6 +1682,8 @@ def run_hotlist(
     cfg = cfg or AttributionConfig()
     if model_override:
         cfg.llm_model = model_override
+    elif not (cfg.llm_model or "").strip():
+        cfg.llm_model = resolve_litellm_model("attribution")
     market = (market or "all").lower()
     if market not in ("all", "us", "crypto"):
         market = "all"
@@ -1733,9 +1735,9 @@ def run_hotlist(
 
     events = merge_event_pools(base_events, fresh_events)
 
-    client = LiteLLMClient(model_override=cfg.llm_model)
+    client = LiteLLMClient(model_override=cfg.llm_model, purpose="attribution")
     health_ok, health_http, health_msg = client.check_health()
-    fact_checker = PerplexityFactChecker(prefer_openrouter_online=True) if verify_online else PerplexityFactChecker(prefer_openrouter_online=False)
+    fact_checker = LiteLLMFactChecker() if verify_online else LiteLLMFactChecker(disabled=True)
 
     reports = []
     all_pt = all_ct = 0

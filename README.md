@@ -23,10 +23,32 @@ python3 run.py --symbol BTC/USDT --poll --interval 60 --cycles 3 --stream-out ou
 python3 -m unittest discover -s tests -v
 ```
 
-## 2. Optional Plugins & LLM Mode
+## 2. LiteLLM Gateway & Optional Plugins
 
-- **LLM Classification (`OPENAI_API_KEY`)**: Set `OPENAI_API_KEY` (and optional `OPENAI_BASE_URL`, `OPENAI_MODEL`) to enable `OpenAICompatibleClassifier`. When unset, the pipeline automatically runs `RuleLexiconClassifier` (`rule_lexicon_fallback`) and records `classifier_mode` on every event.
-- **CryptoPanic Plugin (`CRYPTOPANIC_API_KEY`)**: Optional keyed source in `fin_news_events/sources/plugins.py`.
+All model calls (attribution LLM, `--label-with-llm` distillation, and online fact-check) go through a single OpenAI-compatible LiteLLM client (`POST {LITELLM_BASE_URL}/chat/completions`). There is no direct OpenRouter or Perplexity SDK path.
+
+### Connect to the company LiteLLM (usually only these)
+
+Copy `.env.example` to `.env` (or `.env.litellm`) and set:
+
+| Variable | Required | Default | Purpose |
+|---|---|---|---|
+| `LITELLM_BASE_URL` | yes | `http://127.0.0.1:4000/v1` | Gateway base URL, including `/v1` |
+| `LITELLM_API_KEY` | yes | — | Gateway / virtual key |
+| `LITELLM_MODEL_ATTRIBUTION` | no | `gemini-flash-lite` | `--hotlist` move attribution |
+| `LITELLM_MODEL_LABEL` | no | `gemini-flash-lite` | `--label-with-llm` / classifier extraction |
+| `LITELLM_MODEL_FACTCHECK` | no | `perplexity-sonar` | Online multi-source fact-check |
+| `LITELLM_MODEL` | no | — | Fallback if a purpose-specific model is unset |
+
+The alias names must exist in the gateway `model_list`. See `configs/litellm_config.yaml` for a local proxy example (`litellm --config configs/litellm_config.yaml --port 4000`). If the company already exposes the same aliases, you only change `LITELLM_BASE_URL` and `LITELLM_API_KEY`.
+
+401 / 402 / timeout errors are recorded on the result (`AUTH_ERROR_401`, `PAYMENT_REQUIRED`, `TIMEOUT`) and the run continues without crashing; fact-check failure does not block attribution.
+
+**Demo only:** if `LITELLM_API_KEY` is empty, `OPENROUTER_API_KEY` may be used, and `.env.openrouter` may still be loaded. When the base URL is an OpenRouter-compatible demo endpoint, aliases are mapped to `google/gemini-2.5-flash-lite` and `perplexity/sonar`. Do not commit real keys.
+
+- **CryptoPanic Plugin (`CRYPTOPANIC_API_KEY`)**: Optional keyed source in `fin_news_events/sources/plugins.py`. When the LiteLLM key is unset, classification automatically uses `RuleLexiconClassifier` (`rule_lexicon_fallback`).
+
+接公司 LiteLLM 时：把 `.env.example` 复制为 `.env`，通常只需改 `LITELLM_BASE_URL` 和 `LITELLM_API_KEY`；若公司网关的模型别名与默认值不同，再改 `LITELLM_MODEL_ATTRIBUTION` / `LITELLM_MODEL_LABEL` / `LITELLM_MODEL_FACTCHECK`。
 
 ## 3. Production Go + go-zero Service Mapping
 

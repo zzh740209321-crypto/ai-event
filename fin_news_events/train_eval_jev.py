@@ -18,7 +18,7 @@ from sklearn.pipeline import FeatureUnion, Pipeline
 
 from fin_news_events.classifier import RuleLexiconClassifier
 from fin_news_events.fast_classifier import JevFastClassifier, format_fast_input
-from fin_news_events.llm_clients import LiteLLMClient, PerplexityFactChecker
+from fin_news_events.llm_clients import LiteLLMClient, LiteLLMFactChecker
 from fin_news_events.models import EventCluster
 from fin_news_events.scorer import SUBCATEGORY_BASE_IMPACT, TRANSMISSION_MATRIX
 
@@ -448,9 +448,9 @@ def main() -> None:
     onnx_sub_pred = [p.subcategory for p in onnx_preds]
 
     # Health check only — do not re-call the teacher on the already-labeled test set.
-    llm_client = LiteLLMClient(model_override="google/gemini-2.5-flash-lite")
+    llm_client = LiteLLMClient(purpose="label")
     llm_ok, llm_http, llm_msg = llm_client.check_health()
-    pplx = PerplexityFactChecker()
+    factcheck = LiteLLMFactChecker()
 
     n_test = len(test_rows)
     # Production hybrid routing: gated-in + (low category confidence or controversial subcat) → LLM teacher
@@ -683,8 +683,8 @@ def main() -> None:
             "litellm_health_ok": llm_ok,
             "litellm_health_http": llm_http,
             "litellm_health_msg": (llm_msg or "")[:80],
-            "perplexity_configured": pplx.is_configured,
-            "perplexity_status": "SKIPPED_NO_KEY" if not pplx.is_configured else "CONFIGURED",
+            "factcheck_configured": factcheck.is_configured,
+            "perplexity_status": "SKIPPED_NO_KEY" if not factcheck.is_configured else "CONFIGURED",
             "test_set_teacher_labels_reused": True,
             "routed_gate_only_count": len(routed_gate_only),
             "routed_gate_only_pct": round(len(routed_gate_only) / n_test * 100, 1),

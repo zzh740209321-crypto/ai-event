@@ -126,11 +126,11 @@ class RuleLexiconClassifier(BaseEventClassifier):
 
 
 class OpenAICompatibleClassifier(BaseEventClassifier):
-    """Pluggable LLM classifier using LiteLLM/OpenRouter/OpenAI endpoint."""
+    """Pluggable LLM classifier via the LiteLLM gateway (LITELLM_MODEL_LABEL)."""
 
     def __init__(self):
         from fin_news_events.llm_clients import LiteLLMClient
-        self.client = LiteLLMClient()
+        self.client = LiteLLMClient(purpose="label")
         self.mode_name = f"openai_compatible:{self.client.model}"
         self._fallback = RuleLexiconClassifier()
 
@@ -149,14 +149,14 @@ class OpenAICompatibleClassifier(BaseEventClassifier):
 
 
 class JevHybridClassifier(BaseEventClassifier):
-    """Two-stage classifier: jev/decision ONNX milliseconds filter -> optional LiteLLM/OpenRouter."""
+    """Two-stage classifier: jev/decision ONNX milliseconds filter -> optional LiteLLM gateway."""
 
     def __init__(self, use_llm: bool = False):
         from fin_news_events.fast_classifier import JevFastClassifier
         from fin_news_events.llm_clients import LiteLLMClient
         self.fast = JevFastClassifier()
         self.use_llm = use_llm
-        self.llm = LiteLLMClient() if use_llm else None
+        self.llm = LiteLLMClient(purpose="label") if use_llm else None
         self.llm_healthy = self.llm.check_health()[0] if (self.llm and self.llm.is_configured) else False
         self.rule_dir = RuleLexiconClassifier()
         self.mode_name = "jev_onnx+litellm" if (use_llm and self.llm_healthy) else "jev_decision_onnx"
@@ -205,7 +205,7 @@ def get_classifier(mode: str = "auto") -> BaseEventClassifier:
     if mode == "hybrid":
         return JevHybridClassifier(use_llm=True)
     if mode == "openai":
-        c = LiteLLMClient()
+        c = LiteLLMClient(purpose="label")
         if c.is_configured:
             return OpenAICompatibleClassifier()
         return RuleLexiconClassifier()

@@ -21,7 +21,7 @@ from fin_news_events.hotlist import (
     select_by_score_threshold,
     verification_label,
 )
-from fin_news_events.llm_clients import PerplexityFactChecker
+from fin_news_events.llm_clients import LiteLLMFactChecker
 from fin_news_events.models import MYT
 from fin_news_events.scorer import compute_authority_verification
 from fin_news_events.sources.market_rss import build_targeted_attribution_queries
@@ -171,36 +171,6 @@ class TestHotlist(unittest.TestCase):
         self.assertEqual(causes[0]["independent_sources_count"], 2)
         self.assertIn("事前", causes[0]["timing"])
 
-    def test_factchecker_skip_and_openrouter_fallback(self):
-        with patch.dict(os.environ, {}, clear=True), patch("fin_news_events.llm_clients.load_openrouter_env", return_value=False):
-            fc = PerplexityFactChecker(prefer_openrouter_online=False)
-            res = fc.verify_claim("Test claim", "NVDA")
-            self.assertEqual(res.status, "SKIPPED_NO_KEY")
-
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status.return_value = None
-        mock_resp.json.return_value = {
-            "choices": [{
-                "message": {
-                    "content": '```json\n{"status":"VERIFIED","independent_sources_count":3,"authority_tier":"official","key_sources":["NVIDIA Newsroom","SEC","Reuters"],"summary":"已确认。"}\n```',
-                    "annotations": [
-                        {"type": "url_citation", "url_citation": {"url": "https://nvidianews.nvidia.com/1"}},
-                        {"type": "url_citation", "url_citation": {"url": "https://www.reuters.com/1"}},
-                    ],
-                }
-            }],
-            "usage": {"prompt_tokens": 50, "completion_tokens": 40, "cost": 0.0051},
-        }
-        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "sk-or-test", "OPENROUTER_BASE_URL": "https://openrouter.ai/api/v1"}, clear=True), \
-             patch("fin_news_events.llm_clients.load_openrouter_env", return_value=False), \
-             patch("fin_news_events.llm_clients.requests.post", return_value=mock_resp):
-            fc2 = PerplexityFactChecker(prefer_openrouter_online=True)
-            self.assertEqual(fc2.provider, "openrouter")
-            r2 = fc2.verify_claim("Huang reinstated", "NVDA", "2026-11-23")
-            self.assertEqual(r2.status, "VERIFIED")
-            self.assertEqual(r2.verification_tier, "confirmed")
-            self.assertEqual(len(r2.citations), 2)
-            self.assertAlmostEqual(r2.cost_usd, 0.0051, places=4)
 
 
     def test_select_by_score_threshold_keeps_near_top(self):

@@ -8,10 +8,10 @@ from pathlib import Path
 from typing import Optional
 
 from fin_news_events.fast_classifier import JevFastClassifier
-from fin_news_events.llm_clients import LiteLLMClient, PerplexityFactChecker
+from fin_news_events.llm_clients import LiteLLMClient, LiteLLMFactChecker
 from fin_news_events.train_eval_jev import _apply_spot_check_audit, _derive_weak_label, _load_split, _norm_headline
 
-# OpenRouter listed prices for google/gemini-2.5-flash-lite (USD per 1M tokens)
+# Catalog estimate for the default attribution/label alias (override if the gateway publishes other prices)
 PRICE_IN_PER_M = 0.10
 PRICE_OUT_PER_M = 0.40
 
@@ -64,7 +64,7 @@ def run_label_with_llm(
     workers: int = 8,
     build_pool: bool = False,
 ) -> dict:
-    """Label events using OpenRouter/LiteLLM (and optional Perplexity) for distillation."""
+    """Label events using the LiteLLM gateway (LITELLM_MODEL_LABEL) for distillation."""
     if build_pool or not input_json:
         rows = build_label_pool(limit=limit)
     else:
@@ -75,8 +75,8 @@ def run_label_with_llm(
         if len(rows) > limit:
             rows = rows[:limit]
 
-    client = LiteLLMClient(model_override=model_override)
-    pplx = PerplexityFactChecker()
+    client = LiteLLMClient(model_override=model_override, purpose="label")
+    factcheck = LiteLLMFactChecker()
     ok, http_code, msg = client.check_health()
 
     summary = {
@@ -87,7 +87,7 @@ def run_label_with_llm(
         "llm_health_ok": ok,
         "llm_health_http": http_code,
         "llm_health_msg": "OK" if ok else (msg[:160] if msg else ""),
-        "perplexity_configured": pplx.is_configured,
+        "factcheck_configured": factcheck.is_configured,
         "labeled_count": 0,
         "error_count": 0,
         "prompt_tokens": 0,
@@ -144,8 +144,8 @@ def run_label_with_llm(
         if res.status != "OK":
             return {"_error": True, "event_id": r.get("event_id"), "status": res.status, "raw_error": res.raw_error}
         fact = None
-        if pplx.is_configured and r.get("subcategory") in ("leadership_governance", "enforcement_lawsuit"):
-            fc = pplx.verify_claim(r["headline"], r["target_symbol"])
+        if factcheck.is_configured and r.get("subcategory") in ("leadership_governance", "enforcement_lawsuit"):
+            fc = factcheck.verify_claim(r["headline"], r["target_symbol"])
             fact = {"status": fc.status, "summary": fc.summary, "citations": fc.citations}
         return {
             "event_id": r["event_id"],

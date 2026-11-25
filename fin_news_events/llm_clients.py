@@ -9,7 +9,7 @@ from typing import Any, Optional
 import requests
 import time
 
-ENV_OPENROUTER_PATH = Path(__file__).resolve().parent.parent / ".env.openrouter"
+ROOT = Path(__file__).resolve().parent.parent
 
 ALLOWED_CATEGORIES = ("MACRO", "TRADFI", "TECH_AI", "POLITICS_REG", "CRYPTO")
 ALLOWED_SUBCATEGORIES = {
@@ -107,27 +107,88 @@ def normalize_llm_taxonomy(category: str | None, subcategory: str | None) -> tup
 
 
 
-def load_openrouter_env(env_path: Path = ENV_OPENROUTER_PATH) -> bool:
-    """Silently load key/base_url from .env.openrouter into os.environ without printing values."""
-    if not env_path.exists():
-        return False
+ENV_FILE_CANDIDATES = (
+    ROOT / ".env",
+    ROOT / ".env.litellm",
+    ROOT / ".env.openrouter",  # demo-only fallback; never commit secrets
+)
+
+# Company LiteLLM friendly aliases. The gateway config maps these to upstream models.
+DEFAULT_LITELLM_BASE_URL = "http://127.0.0.1:4000/v1"
+DEFAULT_MODEL_ATTRIBUTION = "gemini-flash-lite"
+DEFAULT_MODEL_LABEL = "gemini-flash-lite"
+DEFAULT_MODEL_FACTCHECK = "perplexity-sonar"
+
+# When the LiteLLM base URL is an OpenRouter-compatible demo endpoint, map aliases
+# to OpenRouter model ids. All traffic still goes to {LITELLM_BASE_URL}/chat/completions.
+_OPENROUTER_DEMO_MODEL_MAP = {
+    "gemini-flash-lite": "google/gemini-2.5-flash-lite",
+    "perplexity-sonar": "perplexity/sonar",
+}
+
+PURPOSE_MODEL_ENV = {
+    "attribution": "LITELLM_MODEL_ATTRIBUTION",
+    "label": "LITELLM_MODEL_LABEL",
+    "factcheck": "LITELLM_MODEL_FACTCHECK",
+}
+PURPOSE_MODEL_DEFAULT = {
+    "attribution": DEFAULT_MODEL_ATTRIBUTION,
+    "label": DEFAULT_MODEL_LABEL,
+    "factcheck": DEFAULT_MODEL_FACTCHECK,
+}
+
+
+def load_litellm_env() -> bool:
+    """Load LiteLLM settings from .env files into os.environ (setdefault, never prints values)."""
     loaded = False
-    for raw in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#") or "=" not in line:
+    for env_path in ENV_FILE_CANDIDATES:
+        if not env_path.exists():
             continue
-        k, v = line.split("=", 1)
-        k = k.replace("export ", "").strip()
-        v = v.strip().strip('"').strip("'")
-        if k and v:
-            os.environ.setdefault(k, v)
-            loaded = True
+        for raw in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k = k.replace("export ", "").strip()
+            v = v.strip().strip('"').strip("'")
+            if k and v:
+                os.environ.setdefault(k, v)
+                loaded = True
     return loaded
+
+
+def load_openrouter_env(env_path: Path | None = None) -> bool:
+    """Backward-compatible alias of load_litellm_env (demo .env.openrouter is already included)."""
+    return load_litellm_env()
+
+
+def _litellm_credentials() -> tuple[str, str]:
+    load_litellm_env()
+    api_key = (os.environ.get("LITELLM_API_KEY") or os.environ.get("OPENROUTER_API_KEY") or "").strip()
+    base_url = (os.environ.get("LITELLM_BASE_URL") or os.environ.get("OPENROUTER_BASE_URL") or DEFAULT_LITELLM_BASE_URL).strip().rstrip("/")
+    return api_key, base_url
+
+
+def resolve_litellm_model(purpose: str = "attribution", model_override: Optional[str] = None) -> str:
+    load_litellm_env()
+    _, base_url = _litellm_credentials()
+    purpose = (purpose or "attribution").strip().lower()
+    if purpose not in PURPOSE_MODEL_ENV:
+        purpose = "attribution"
+    model = (
+        (model_override or "").strip()
+        or os.environ.get(PURPOSE_MODEL_ENV[purpose], "").strip()
+        or os.environ.get("LITELLM_MODEL", "").strip()
+        or PURPOSE_MODEL_DEFAULT[purpose]
+    )
+    if "openrouter.ai" in base_url:
+        model = _OPENROUTER_DEMO_MODEL_MAP.get(model, model)
+    return model
 
 
 @dataclass
 class LLMExtractionResult:
-    status: str  # "OK" | "SKIPPED_NO_KEY" | "AUTH_ERROR_401" | "ERROR"
+    status: str  # "OK" | "SKIPPED_NO_KEY" | "AUTH_ERROR_401" | "PAYMENT_REQUIRED" | "TIMEOUT" | "ERROR"
     model: str
     category: Optional[str] = None
     subcategory: Optional[str] = None
@@ -142,63 +203,115 @@ class LLMExtractionResult:
     raw_error: str = ""
 
 
-class LiteLLMClient:
-    """OpenAI-compatible structured JSON extractor supporting OpenRouter, LiteLLM, and OpenAI."""
+@dataclass
+class ChatResult:
+    ok: bool
+    status: str
+    http_status: int = 0
+    data: dict[str, Any] | None = None
+    raw_error: str = ""
 
-    def __init__(self, model_override: Optional[str] = None):
-        load_openrouter_env()
-        self.api_key = (
-            os.environ.get("LITELLM_API_KEY")
-            or os.environ.get("OPENROUTER_API_KEY")
-            or os.environ.get("OPENAI_API_KEY")
-            or ""
-        ).strip()
-        self.base_url = (
-            os.environ.get("LITELLM_BASE_URL")
-            or os.environ.get("OPENROUTER_BASE_URL")
-            or os.environ.get("OPENAI_BASE_URL")
-            or "https://api.openai.com/v1"
-        ).rstrip("/")
-        default_model = (
-            "google/gemini-2.5-flash-lite"
-            if "openrouter.ai" in self.base_url
-            else "gpt-4o-mini"
-        )
-        self.model = (
-            model_override
-            or os.environ.get("LITELLM_MODEL")
-            or os.environ.get("OPENROUTER_MODEL")
-            or os.environ.get("OPENAI_MODEL")
-            or default_model
-        ).strip()
+
+class LiteLLMClient:
+    """Single OpenAI-compatible client: all model calls go to the LiteLLM gateway /chat/completions."""
+
+    def __init__(self, model_override: Optional[str] = None, purpose: str = "attribution"):
+        self.purpose = (purpose or "attribution").strip().lower()
+        self.api_key, self.base_url = _litellm_credentials()
+        self.model = resolve_litellm_model(self.purpose, model_override)
+        self.provider = "litellm"
 
     @property
     def is_configured(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key and self.base_url)
 
     def check_health(self) -> tuple[bool, int, str]:
         if not self.api_key:
             return False, 0, "NO_API_KEY"
-        if "openrouter.ai" in self.base_url:
+        if not self.base_url:
+            return False, 0, "NO_BASE_URL"
+        try:
+            r = requests.get(
+                f"{self.base_url}/models",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+                timeout=10,
+            )
+            if r.status_code == 200:
+                return True, 200, "OK"
+            if r.status_code in (401, 403):
+                return False, r.status_code, "AUTH_ERROR"
+            if r.status_code == 402:
+                return False, 402, "PAYMENT_REQUIRED"
+            if r.status_code == 404:
+                # Some LiteLLM deployments omit /models; key+URL is enough to attempt calls.
+                return True, 404, "MODELS_ENDPOINT_MISSING"
+            return False, r.status_code, (r.text or "")[:160]
+        except requests.Timeout:
+            return False, 0, "TIMEOUT"
+        except Exception as exc:
+            return False, 0, str(exc)[:160]
+
+    def chat_completions(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        max_tokens: int = 400,
+        temperature: float = 0.1,
+        json_object: bool = True,
+        timeout: float | tuple[float, float] = (5, 20),
+        retries: int = 3,
+        model: Optional[str] = None,
+    ) -> ChatResult:
+        """POST /chat/completions with graceful 401/402/timeout handling. Never raises to callers."""
+        if not self.is_configured:
+            return ChatResult(ok=False, status="SKIPPED_NO_KEY", raw_error="LITELLM_API_KEY not set")
+        payload: dict[str, Any] = {
+            "model": (model or self.model),
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }
+        if json_object:
+            payload["response_format"] = {"type": "json_object"}
+        last_err = ""
+        last_http = 0
+        attempts = max(1, retries)
+        for attempt in range(attempts):
             try:
-                r = requests.get(
-                    f"{self.base_url}/auth/key",
-                    headers={"Authorization": f"Bearer {self.api_key}"},
-                    timeout=10,
+                resp = requests.post(
+                    f"{self.base_url}/chat/completions",
+                    headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+                    json=payload,
+                    timeout=timeout,
                 )
-                if r.status_code == 200:
-                    return True, 200, "OK"
-                return False, r.status_code, r.text[:160]
+                last_http = resp.status_code
+                if resp.status_code == 401:
+                    return ChatResult(ok=False, status="AUTH_ERROR_401", http_status=401, raw_error=resp.text[:200])
+                if resp.status_code == 402:
+                    return ChatResult(ok=False, status="PAYMENT_REQUIRED", http_status=402, raw_error=resp.text[:200])
+                if resp.status_code == 429 or resp.status_code >= 500:
+                    last_err = f"HTTP {resp.status_code}"
+                    time.sleep(1.5 * (attempt + 1))
+                    continue
+                if resp.status_code >= 400:
+                    return ChatResult(ok=False, status="ERROR", http_status=resp.status_code, raw_error=resp.text[:200])
+                return ChatResult(ok=True, status="OK", http_status=resp.status_code, data=resp.json())
+            except requests.Timeout:
+                last_err = "TIMEOUT"
+                last_http = 0
+                time.sleep(1.2 * (attempt + 1))
             except Exception as exc:
-                return False, 0, str(exc)
-        return True, 200, "KEY_SET"
+                last_err = str(exc)[:200]
+                time.sleep(1.2 * (attempt + 1))
+        status = "TIMEOUT" if last_err == "TIMEOUT" else "ERROR"
+        return ChatResult(ok=False, status=status, http_status=last_http, raw_error=last_err[:200])
 
     def extract_event(self, headline: str, summary: str, target_symbol: str, retrieval_layer: str) -> LLMExtractionResult:
-        if not self.api_key:
+        if not self.is_configured:
             return LLMExtractionResult(
                 status="SKIPPED_NO_KEY",
                 model=self.model,
-                rationale="LITELLM_API_KEY / OPENROUTER_API_KEY / OPENAI_API_KEY not set",
+                rationale="LITELLM_API_KEY not set",
             )
 
         allowed_subs = "; ".join(
@@ -220,66 +333,41 @@ class LiteLLMClient:
             f"Headline: {headline}\n"
             f"Snippet: {summary[:500]}"
         )
-        last_err = ""
-        for attempt in range(4):
-            try:
-                resp = requests.post(
-                    f"{self.base_url}/chat/completions",
-                    headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
-                    json={
-                        "model": self.model,
-                        "temperature": 0.1,
-                        "max_tokens": 400,
-                        "response_format": {"type": "json_object"},
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_prompt},
-                        ],
-                    },
-                    timeout=(5, 20),
-                )
-                if resp.status_code == 401:
-                    return LLMExtractionResult(
-                        status="AUTH_ERROR_401",
-                        model=self.model,
-                        raw_error=resp.text[:160],
-                    )
-                if resp.status_code == 429 or resp.status_code >= 500:
-                    last_err = f"HTTP {resp.status_code}"
-                    time.sleep(1.5 * (attempt + 1))
-                    continue
-                resp.raise_for_status()
-                data = resp.json()
-                usage = data.get("usage", {})
-                content = data["choices"][0]["message"]["content"]
-                parsed = json.loads(content)
-                cat, sub = normalize_llm_taxonomy(parsed.get("category"), parsed.get("subcategory"))
-                direction = str(parsed.get("direction", "NEUTRAL")).upper()
-                if direction not in ("BULLISH", "BEARISH", "NEUTRAL", "MIXED"):
-                    direction = "NEUTRAL"
-                return LLMExtractionResult(
-                    status="OK",
-                    model=self.model,
-                    category=cat,
-                    subcategory=sub,
-                    direction=direction,
-                    confidence=float(parsed.get("confidence", 0.7)),
-                    is_relevant=bool(parsed.get("is_relevant", True)),
-                    materiality_score=float(parsed.get("materiality_score", 50.0)),
-                    summary=str(parsed.get("summary", "")),
-                    rationale=str(parsed.get("rationale", "")),
-                    prompt_tokens=int(usage.get("prompt_tokens", 0)),
-                    completion_tokens=int(usage.get("completion_tokens", 0)),
-                )
-            except Exception as exc:
-                last_err = str(exc)
-                time.sleep(1.2 * (attempt + 1))
-        return LLMExtractionResult(status="ERROR", model=self.model, raw_error=last_err[:200])
+        chat = self.chat_completions(
+            [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
+            max_tokens=400,
+        )
+        if not chat.ok or not chat.data:
+            return LLMExtractionResult(status=chat.status, model=self.model, raw_error=chat.raw_error)
+        try:
+            usage = chat.data.get("usage", {})
+            content = chat.data["choices"][0]["message"]["content"]
+            parsed = json.loads(_strip_json_fence(content))
+            cat, sub = normalize_llm_taxonomy(parsed.get("category"), parsed.get("subcategory"))
+            direction = str(parsed.get("direction", "NEUTRAL")).upper()
+            if direction not in ("BULLISH", "BEARISH", "NEUTRAL", "MIXED"):
+                direction = "NEUTRAL"
+            return LLMExtractionResult(
+                status="OK",
+                model=self.model,
+                category=cat,
+                subcategory=sub,
+                direction=direction,
+                confidence=float(parsed.get("confidence", 0.7)),
+                is_relevant=bool(parsed.get("is_relevant", True)),
+                materiality_score=float(parsed.get("materiality_score", 50.0)),
+                summary=str(parsed.get("summary", "")),
+                rationale=str(parsed.get("rationale", "")),
+                prompt_tokens=int(usage.get("prompt_tokens", 0)),
+                completion_tokens=int(usage.get("completion_tokens", 0)),
+            )
+        except Exception as exc:
+            return LLMExtractionResult(status="ERROR", model=self.model, raw_error=str(exc)[:200])
 
     def attribute_price_move(self, user_payload: str) -> "AttributionLLMResult":
         """One-sentence Chinese attribution of an already-observed price move. Never forecasts prices."""
-        if not self.api_key:
-            return AttributionLLMResult(status="SKIPPED_NO_KEY", model=self.model, raw_error="no api key")
+        if not self.is_configured:
+            return AttributionLLMResult(status="SKIPPED_NO_KEY", model=self.model, raw_error="LITELLM_API_KEY not set")
         system_prompt = (
             "You are a financial move-attribution assistant. The price move already happened; "
             "do NOT predict future prices. Return strictly ONE JSON object with keys: "
@@ -295,56 +383,136 @@ class LiteLLMClient:
             "If evidence is weak or only technical/liquidity explanations fit, set verdict to NO_CLEAR_NEWS "
             "and write: 未找到明确新闻，可能为流动性/清算/技术面. Do not force a story."
         )
-        last_err = ""
-        for attempt in range(4):
+        chat = self.chat_completions(
+            [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_payload[:8000]}],
+            max_tokens=300,
+        )
+        if not chat.ok or not chat.data:
+            return AttributionLLMResult(status=chat.status, model=self.model, raw_error=chat.raw_error)
+        try:
+            usage = chat.data.get("usage", {})
+            raw_c = _strip_json_fence(chat.data["choices"][0]["message"]["content"])
+            parsed = json.loads(raw_c)
+            verdict = str(parsed.get("verdict", "NO_CLEAR_NEWS")).upper()
+            if verdict not in ("ATTRIBUTED", "EX_POST_REPORT", "NO_CLEAR_NEWS", "MIXED", "CONTRARIAN"):
+                verdict = "NO_CLEAR_NEWS"
+            conf = max(0.0, min(1.0, float(parsed.get("confidence", 0.0))))
+            text = str(parsed.get("attribution_zh", "")).strip()
+            if verdict == "NO_CLEAR_NEWS" and not text:
+                text = "未找到明确新闻，可能为流动性/清算/技术面"
+            return AttributionLLMResult(
+                status="OK",
+                model=self.model,
+                attribution_zh=text,
+                confidence=conf,
+                verdict=verdict,
+                prompt_tokens=int(usage.get("prompt_tokens", 0)),
+                completion_tokens=int(usage.get("completion_tokens", 0)),
+            )
+        except Exception as exc:
+            return AttributionLLMResult(status="ERROR", model=self.model, raw_error=str(exc)[:200])
+
+    def verify_claim(
+        self,
+        headline: str,
+        target_symbol: str,
+        session_date: str | None = None,
+    ) -> "FactCheckResult":
+        if not self.is_configured:
+            return FactCheckResult(
+                status="SKIPPED_NO_KEY",
+                model=self.model,
+                provider="litellm",
+                verification_tier="unverified",
+                summary="LITELLM_API_KEY not set; multi-source web fact-check skipped",
+                citations=[],
+            )
+        date_hint = f" around {session_date}" if session_date else ""
+        prompt = (
+            f"Verify this financial/market event or attribution for {target_symbol}{date_hint}: '{headline[:500]}'. "
+            "Check official sources (SEC filings, company newsroom) and independent Tier-1 news wires (Reuters, AP, Bloomberg, WSJ, CNBC). "
+            "Return strictly ONE JSON object with keys: "
+            "status (VERIFIED|DISPUTED|UNCONFIRMED), "
+            "independent_sources_count (integer count of distinct authoritative outlets), "
+            "authority_tier (official|tier1_multi|single_tier1|unverified), "
+            "key_sources (array of up to 4 outlet/source names), "
+            "summary (concise 1-2 sentences in Chinese noting what is confirmed and exact move/driver if applicable)."
+        )
+        chat = self.chat_completions(
+            [{"role": "user", "content": prompt}],
+            max_tokens=320,
+            json_object=False,
+            timeout=28,
+            retries=2,
+        )
+        if not chat.ok or not chat.data:
+            return FactCheckResult(
+                status=chat.status,
+                model=self.model,
+                provider="litellm",
+                verification_tier="unverified",
+                raw_error=chat.raw_error,
+                citations=[],
+            )
+        try:
+            data = chat.data
+            msg = data["choices"][0]["message"]
+            text = _strip_json_fence(msg.get("content") or "")
+            citations: list[str] = list(data.get("citations") or [])
+            for ann in msg.get("annotations") or []:
+                if isinstance(ann, dict) and ann.get("type") == "url_citation":
+                    u = (ann.get("url_citation") or {}).get("url")
+                    if u and u not in citations:
+                        citations.append(u)
+            parsed: dict[str, Any] = {}
             try:
-                resp = requests.post(
-                    f"{self.base_url}/chat/completions",
-                    headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
-                    json={
-                        "model": self.model,
-                        "temperature": 0.1,
-                        "max_tokens": 300,
-                        "response_format": {"type": "json_object"},
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_payload[:8000]},
-                        ],
-                    },
-                    timeout=(5, 20),
-                )
-                if resp.status_code == 401:
-                    return AttributionLLMResult(status="AUTH_ERROR_401", model=self.model, raw_error=resp.text[:160])
-                if resp.status_code == 429 or resp.status_code >= 500:
-                    last_err = f"HTTP {resp.status_code}"
-                    time.sleep(1.5 * (attempt + 1))
-                    continue
-                resp.raise_for_status()
-                data = resp.json()
-                usage = data.get("usage", {})
-                raw_c = _strip_json_fence(data["choices"][0]["message"]["content"])
-                parsed = json.loads(raw_c)
-                verdict = str(parsed.get("verdict", "NO_CLEAR_NEWS")).upper()
-                if verdict not in ("ATTRIBUTED", "EX_POST_REPORT", "NO_CLEAR_NEWS", "MIXED", "CONTRARIAN"):
-                    verdict = "NO_CLEAR_NEWS"
-                conf = float(parsed.get("confidence", 0.0))
-                conf = max(0.0, min(1.0, conf))
-                text = str(parsed.get("attribution_zh", "")).strip()
-                if verdict == "NO_CLEAR_NEWS" and not text:
-                    text = "未找到明确新闻，可能为流动性/清算/技术面"
-                return AttributionLLMResult(
-                    status="OK",
-                    model=self.model,
-                    attribution_zh=text,
-                    confidence=conf,
-                    verdict=verdict,
-                    prompt_tokens=int(usage.get("prompt_tokens", 0)),
-                    completion_tokens=int(usage.get("completion_tokens", 0)),
-                )
-            except Exception as exc:
-                last_err = str(exc)
-                time.sleep(1.2 * (attempt + 1))
-        return AttributionLLMResult(status="ERROR", model=self.model, raw_error=last_err[:200])
+                parsed = json.loads(text)
+            except Exception:
+                m_start = text.find("{")
+                m_end = text.rfind("}")
+                if m_start >= 0 and m_end > m_start:
+                    try:
+                        parsed = json.loads(text[m_start : m_end + 1])
+                    except Exception:
+                        parsed = {}
+            status = str(parsed.get("status", "UNCONFIRMED")).upper()
+            if status not in ("VERIFIED", "DISPUTED", "UNCONFIRMED"):
+                status = "UNCONFIRMED"
+            ind_cnt = int(parsed.get("independent_sources_count") or len(citations) or 0)
+            auth_tier = str(parsed.get("authority_tier") or "").lower()
+            if status == "VERIFIED" and (ind_cnt >= 2 or len(citations) >= 2 or auth_tier in ("official", "tier1_multi")):
+                v_tier = "confirmed"
+            elif status == "VERIFIED":
+                v_tier = "single_source"
+            else:
+                v_tier = "unverified"
+            usage = data.get("usage") or {}
+            pt = int(usage.get("prompt_tokens", 0))
+            ct = int(usage.get("completion_tokens", 0))
+            raw_cost = usage.get("cost")
+            cost_usd = float(raw_cost) if raw_cost is not None else 0.0
+            return FactCheckResult(
+                status=status,
+                model=self.model,
+                provider="litellm",
+                verification_tier=v_tier,
+                summary=str(parsed.get("summary", text[:320])),
+                citations=citations[:8],
+                independent_sources_count=ind_cnt,
+                key_sources=[str(x) for x in (parsed.get("key_sources") or [])[:5]],
+                prompt_tokens=pt,
+                completion_tokens=ct,
+                cost_usd=round(cost_usd, 6),
+            )
+        except Exception as exc:
+            return FactCheckResult(
+                status="ERROR",
+                model=self.model,
+                provider="litellm",
+                verification_tier="unverified",
+                raw_error=str(exc)[:220],
+                citations=[],
+            )
 
 
 @dataclass
@@ -361,9 +529,9 @@ class AttributionLLMResult:
 
 @dataclass
 class FactCheckResult:
-    status: str  # "VERIFIED" | "DISPUTED" | "UNCONFIRMED" | "SKIPPED_NO_KEY" | "ERROR"
+    status: str  # "VERIFIED" | "DISPUTED" | "UNCONFIRMED" | "SKIPPED_NO_KEY" | "AUTH_ERROR_401" | "PAYMENT_REQUIRED" | "TIMEOUT" | "ERROR"
     model: str
-    provider: str = "none"  # "perplexity" | "openrouter" | "none"
+    provider: str = "litellm"
     verification_tier: str = "unverified"  # "confirmed" | "single_source" | "unverified"
     summary: str = ""
     citations: list[str] | None = None
@@ -387,150 +555,33 @@ def _strip_json_fence(text: str) -> str:
     return s
 
 
-class PerplexityFactChecker:
-    """Multi-source online fact-checking client: uses PERPLEXITY_API_KEY first, then optional OpenRouter online model (perplexity/sonar)."""
+class LiteLLMFactChecker:
+    """Online fact-check via the same LiteLLM gateway (LITELLM_MODEL_FACTCHECK)."""
 
-    def __init__(
-        self,
-        prefer_openrouter_online: bool = True,
-        openrouter_model: str | None = None,
-    ):
-        load_openrouter_env()
-        self.pplx_key = os.environ.get("PERPLEXITY_API_KEY", "").strip()
-        self.openrouter_key = (
-            os.environ.get("OPENROUTER_API_KEY")
-            or os.environ.get("LITELLM_API_KEY")
-            or ""
-        ).strip()
-        self.openrouter_base = (
-            os.environ.get("OPENROUTER_BASE_URL")
-            or os.environ.get("LITELLM_BASE_URL")
-            or "https://openrouter.ai/api/v1"
-        ).rstrip("/")
-
-        if self.pplx_key:
-            self.provider = "perplexity"
-            self.api_key = self.pplx_key
-            self.endpoint = "https://api.perplexity.ai/chat/completions"
-            self.model = os.environ.get("PERPLEXITY_MODEL", "sonar").strip()
-        elif prefer_openrouter_online and self.openrouter_key and "openrouter.ai" in self.openrouter_base:
-            self.provider = "openrouter"
-            self.api_key = self.openrouter_key
-            self.endpoint = f"{self.openrouter_base}/chat/completions"
-            self.model = (
-                openrouter_model
-                or os.environ.get("OPENROUTER_FACTCHECK_MODEL")
-                or "perplexity/sonar"
-            ).strip()
-        else:
-            self.provider = "none"
-            self.api_key = ""
-            self.endpoint = ""
-            self.model = os.environ.get("PERPLEXITY_MODEL", "sonar").strip()
+    def __init__(self, model_override: Optional[str] = None, disabled: bool = False, **_ignored: Any):
+        self.disabled = disabled
+        self.client = LiteLLMClient(model_override=model_override, purpose="factcheck")
+        self.provider = "litellm"
+        self.model = self.client.model
+        self.api_key = self.client.api_key
+        self.base_url = self.client.base_url
 
     @property
     def is_configured(self) -> bool:
-        return bool(self.api_key and self.endpoint)
+        return (not self.disabled) and self.client.is_configured
 
-    def verify_claim(
-        self,
-        headline: str,
-        target_symbol: str,
-        session_date: str | None = None,
-    ) -> FactCheckResult:
-        if not self.is_configured:
+    def verify_claim(self, headline: str, target_symbol: str, session_date: str | None = None) -> FactCheckResult:
+        if self.disabled:
             return FactCheckResult(
                 status="SKIPPED_NO_KEY",
                 model=self.model,
-                provider="none",
+                provider="litellm",
                 verification_tier="unverified",
-                summary="PERPLEXITY_API_KEY and OpenRouter online fallback not configured; multi-source web fact-check skipped",
+                summary="Online fact-check disabled for this run",
                 citations=[],
             )
-        date_hint = f" around {session_date}" if session_date else ""
-        prompt = (
-            f"Verify this financial/market event or attribution for {target_symbol}{date_hint}: '{headline[:500]}'. "
-            "Check official sources (SEC filings, company newsroom) and independent Tier-1 news wires (Reuters, AP, Bloomberg, WSJ, CNBC). "
-            "Return strictly ONE JSON object with keys: "
-            "status (VERIFIED|DISPUTED|UNCONFIRMED), "
-            "independent_sources_count (integer count of distinct authoritative outlets), "
-            "authority_tier (official|tier1_multi|single_tier1|unverified), "
-            "key_sources (array of up to 4 outlet/source names), "
-            "summary (concise 1-2 sentences in Chinese noting what is confirmed and exact move/driver if applicable)."
-        )
-        try:
-            resp = requests.post(
-                self.endpoint,
-                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
-                json={
-                    "model": self.model,
-                    "temperature": 0.1,
-                    "max_tokens": 320,
-                    "messages": [{"role": "user", "content": prompt}],
-                },
-                timeout=28,
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            msg = data["choices"][0]["message"]
-            text = _strip_json_fence(msg.get("content") or "")
-            citations: list[str] = list(data.get("citations") or [])
-            for ann in msg.get("annotations") or []:
-                if isinstance(ann, dict) and ann.get("type") == "url_citation":
-                    u = (ann.get("url_citation") or {}).get("url")
-                    if u and u not in citations:
-                        citations.append(u)
-            parsed: dict[str, Any] = {}
-            try:
-                parsed = json.loads(text)
-            except Exception:
-                # Try locating first JSON object substring
-                m_start = text.find("{")
-                m_end = text.rfind("}")
-                if m_start >= 0 and m_end > m_start:
-                    try:
-                        parsed = json.loads(text[m_start : m_end + 1])
-                    except Exception:
-                        parsed = {}
-            status = str(parsed.get("status", "UNCONFIRMED")).upper()
-            if status not in ("VERIFIED", "DISPUTED", "UNCONFIRMED"):
-                status = "UNCONFIRMED"
-            ind_cnt = int(parsed.get("independent_sources_count") or len(citations) or 0)
-            auth_tier = str(parsed.get("authority_tier") or "").lower()
-            if status == "VERIFIED" and (ind_cnt >= 2 or len(citations) >= 2 or auth_tier in ("official", "tier1_multi")):
-                v_tier = "confirmed"
-            elif status == "VERIFIED":
-                v_tier = "single_source"
-            else:
-                v_tier = "unverified"
-            usage = data.get("usage") or {}
-            pt = int(usage.get("prompt_tokens", 0))
-            ct = int(usage.get("completion_tokens", 0))
-            raw_cost = usage.get("cost")
-            if raw_cost is not None:
-                cost_usd = float(raw_cost)
-            else:
-                # Perplexity sonar catalog fallback: $1/1M in+out + $0.005/search
-                cost_usd = (pt + ct) / 1_000_000.0 + 0.005
-            return FactCheckResult(
-                status=status,
-                model=self.model,
-                provider=self.provider,
-                verification_tier=v_tier,
-                summary=str(parsed.get("summary", text[:320])),
-                citations=citations[:8],
-                independent_sources_count=ind_cnt,
-                key_sources=[str(x) for x in (parsed.get("key_sources") or [])[:5]],
-                prompt_tokens=pt,
-                completion_tokens=ct,
-                cost_usd=round(cost_usd, 6),
-            )
-        except Exception as exc:
-            return FactCheckResult(
-                status="ERROR",
-                model=self.model,
-                provider=self.provider,
-                verification_tier="unverified",
-                raw_error=str(exc)[:220],
-                citations=[],
-            )
+        return self.client.verify_claim(headline, target_symbol, session_date)
+
+
+# Historical alias: all fact-checks now go through LiteLLM, never a direct Perplexity/OpenRouter SDK.
+PerplexityFactChecker = LiteLLMFactChecker
