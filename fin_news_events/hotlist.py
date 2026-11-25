@@ -95,6 +95,39 @@ EQUITY_MACRO_TOKENS = (
     "pce", "cpi", "inflation", "treasury", "yield", "apple", "microsoft", "tesla", "anthropic",
 )
 MACRO_CATS = {"MACRO", "POLITICS_REG", "TRADFI"}
+MARKET_CONTEXT_TOKENS = EQUITY_MACRO_TOKENS + (
+    "stock", "stocks", "share", "shares", "equity", "equities", "market", "markets",
+    "earnings", "revenue", "guidance", "ipo", "etf", "gdp", "recession", "unemployment",
+)
+CRYPTO_CREDIT_TOKENS = (
+    "aave", "defi", "on-chain credit", "crypto credit", "lending protocol",
+    "falconx", "bitcoin miner", "solo bitcoin", "stablecoin yield", "high-yield credit",
+    "hinc fund", "tokenized credit", "tokenised credit", "onchain lending",
+)
+POLITICAL_NOISE_TOKENS = (
+    "rep.", "representative ", "senator ", "congressman", "congresswoman",
+    "conflict of interest", "impeach", "subpoena", "ethics probe", "lutnick probe",
+    "house hearing", "campaign rally",
+)
+_UNWIND_DIR_RE = re.compile(
+    r"(unwind\w*|fizzl\w*|gave back|giving up|cool\w* after|after .{0,40}rally|"
+    r"fueled (?:rally|gains).{0,40}(?:unwind|fade|cool|drop)|"
+    r"rally (?:unwinds|fades|cools|fizzles)|profit[- ]taking)",
+    re.I,
+)
+_BEARISH_DIR_RE = re.compile(
+    r"(drop\w*|\bfallen?\b|\bfalls\b|\bfell\b|slid\w*|\bslides?\b|"
+    r"sell-?off|retreat\w*|pullback|drag(?:s|ged)?\b|kicked out|fall \d+|"
+    r"jitters|stocks? (?:mostly )?lower|futures? drop|\bdeclin\w+|"
+    r"tariff\w*|trade probe|trade war)",
+    re.I,
+)
+_BULLISH_DIR_RE = re.compile(
+    r"(soars?|surges?|jumps?|rallies\b|rallied\b|\brally\b|rebounds?|reinstat\w*|"
+    r"\bupgrades?\b|record high|beats? estimates|brings? back|is back|"
+    r"returns? as|fuels? (?:gains|rally)|stocks? soar|close(?:s|d)? up)",
+    re.I,
+)
 
 
 @dataclass
@@ -117,7 +150,11 @@ class AttributionConfig:
     w_dir: float = 0.15
     w_rel: float = 0.15
     attr_score_min: float = 0.28
-    llm_top_k: int = 5
+    llm_top_k: int = 8
+    cause_score_min: float = 0.70
+    cause_rel_of_top: float = 0.75
+    cause_max_n: int = 8
+    dir_mismatch_mult: float = 0.40
     common_window_hours: float = 2.0
     news_hotlist_top_n: int = 10
     llm_model: str = "google/gemini-2.5-flash-lite"
@@ -628,6 +665,128 @@ def _n_domains(row: dict) -> int:
     return 1 if row.get("source_count") else 0
 
 
+def infer_news_direction(row: dict) -> str:
+    """Combine classifier/LLM direction with headline rules. Unwind/giveback language is bearish."""
+    hl = f"{row.get('headline', '')} {row.get('summary', '')}"
+    classified = (row.get("direction") or "").strip().upper()
+    if classified not in ("BULLISH", "BEARISH", "NEUTRAL", "MIXED"):
+        classified = ""
+    if _UNWIND_DIR_RE.search(hl):
+        rule = "BEARISH"
+    else:
+        bull = bool(_BULLISH_DIR_RE.search(hl))
+        bear = bool(_BEARISH_DIR_RE.search(hl))
+        if bull and bear:
+            rule = "MIXED"
+        elif bull:
+            rule = "BULLISH"
+        elif bear:
+            rule = "BEARISH"
+        else:
+            rule = "NEUTRAL"
+    if classified in ("BULLISH", "BEARISH"):
+        if rule in ("", "NEUTRAL", classified):
+            return classified
+        if rule == "MIXED":
+            return classified
+        return "MIXED"
+    return rule
+
+
+def is_direction_mismatch(news_dir: str, move_dir: str) -> bool:
+    nd = (news_dir or "").upper()
+    md = (move_dir or "").upper()
+    if nd not in ("BULLISH", "BEARISH") or md not in ("UP", "DOWN"):
+        return False
+    return (md == "UP" and nd == "BEARISH") or (md == "DOWN" and nd == "BULLISH")
+
+
+def is_crypto_credit_noise(row: dict, symbol: str) -> bool:
+    if (symbol or "").endswith("/USDT"):
+        return False
+    hl = f"{row.get('headline', '')} {row.get('summary', '')}".lower()
+    if not any(t in hl for t in CRYPTO_CREDIT_TOKENS):
+        return False
+    equity_anchors = (
+        "nvidia", "nvda", "apple", "microsoft", "tesla", "nasdaq", "s&p", "dow",
+        "tariff", "semiconductor", "chip stock", "wall street", "stock market",
+    )
+    return not any(t in hl for t in equity_anchors)
+
+
+def is_nonmarket_political(row: dict, symbol: str) -> bool:
+    hl = f"{row.get('headline', '')} {row.get('summary', '')}".lower()
+    if any(t in hl for t in MARKET_CONTEXT_TOKENS):
+        return False
+    if any(t in hl for t in POLITICAL_NOISE_TOKENS):
+        return True
+    cat = row.get("category") or ""
+    sub = row.get("subcategory") or ""
+    return cat == "POLITICS_REG" and sub in ("political_statement", "enforcement_lawsuit")
+
+
+def select_by_score_threshold(
+    items: list[dict],
+    *,
+    score_key: str = "attr_score",
+    min_score: float = 0.70,
+    rel_of_top: float = 0.75,
+    max_n: int = 8,
+) -> list[dict]:
+    """Keep items with score >= min_score or >= top * rel_of_top, capped at max_n."""
+    if not items:
+        return []
+    ranked = sorted(items, key=lambda x: float(x.get(score_key) or 0.0), reverse=True)
+    top = float(ranked[0].get(score_key) or 0.0)
+    selected = [
+        x for x in ranked
+        if float(x.get(score_key) or 0.0) >= min_score or float(x.get(score_key) or 0.0) >= top * rel_of_top
+    ]
+    return selected[:max_n]
+
+
+def has_symbol_specific_aligned_news(item: dict, min_score: float = 0.40) -> bool:
+    symbol = item.get("symbol") or ""
+    keys = SYMBOL_KEYWORDS.get(symbol, ())
+    if not keys:
+        return False
+    pool = list(item.get("top_causes") or []) + list(item.get("candidates") or [])
+    for c in pool:
+        if c.get("direction_mismatch"):
+            continue
+        if float(c.get("attr_score") or 0.0) < min_score:
+            continue
+        hl = f"{c.get('headline', '')} {c.get('theme_label_zh', '')}".lower()
+        if any(k.strip() and k in hl for k in keys):
+            return True
+    return False
+
+
+def annotate_contrarian(items: list[dict], groups: list[dict]) -> None:
+    """Mark equity names whose daily direction opposes that day's equity_common factor."""
+    eq_groups = [g for g in groups if g.get("kind") == "equity_common"]
+    for it in items:
+        if it.get("asset_class") != "equity":
+            continue
+        ret = it.get("daily_ret_pct")
+        if ret is None:
+            continue
+        daily_dir = "UP" if ret > 0.15 else ("DOWN" if ret < -0.15 else "FLAT")
+        it["session_move_dir"] = daily_dir
+        for g in eq_groups:
+            if g.get("date") != it.get("date"):
+                continue
+            if it.get("id") in {m["id"] for m in g.get("members") or []}:
+                continue
+            gdir = g.get("move_dir")
+            if daily_dir in ("UP", "DOWN") and gdir in ("UP", "DOWN") and daily_dir != gdir:
+                it["contrarian"] = True
+                it["contrarian_to"] = g.get("kind")
+                it["contrarian_dir"] = gdir
+                it["contrarian_symbols"] = list(g.get("symbols") or [])
+                break
+
+
 def relevance_score(row: dict, symbol: str) -> float:
     hl = f"{row.get('headline','')} {row.get('summary','')}".lower()
     is_crypto_target = symbol.endswith("/USDT")
@@ -636,6 +795,8 @@ def relevance_score(row: dict, symbol: str) -> float:
 
     if not is_crypto_target and has_crypto_only and not has_eq_macro:
         return 0.15
+    if not is_crypto_target and (is_crypto_credit_noise(row, symbol) or is_nonmarket_political(row, symbol)):
+        return 0.12
 
     keys = SYMBOL_KEYWORDS.get(symbol, ())
     if any(k.strip() and k in hl for k in keys):
@@ -692,7 +853,9 @@ def score_candidates(
         heat = news_heat(_n_domains(ev), int(ev.get("source_count") or 1), cfg)
         impact = float(ev.get("impact_score") or 0.0) / 100.0
         rel = relevance_score(ev, symbol)
-        d_al = direction_align(str(ev.get("direction") or ""), move_dir)
+        inferred_dir = infer_news_direction(ev)
+        d_al = direction_align(inferred_dir, move_dir)
+        mismatch = is_direction_mismatch(inferred_dir, move_dir)
         score = (
             cfg.w_time * time_prox
             + cfg.w_impact * impact
@@ -700,6 +863,8 @@ def score_candidates(
             + cfg.w_dir * d_al
             + cfg.w_rel * rel
         )
+        if mismatch:
+            score *= cfg.dir_mismatch_mult
         srcs = [
             {
                 "name": s.get("name"),
@@ -716,6 +881,8 @@ def score_candidates(
             "category": ev.get("category"),
             "subcategory": ev.get("subcategory"),
             "direction": ev.get("direction"),
+            "inferred_direction": inferred_dir,
+            "direction_mismatch": mismatch,
             "impact_score": ev.get("impact_score"),
             "target_symbol": ev.get("target_symbol"),
             "retrieval_layer": ev.get("retrieval_layer"),
@@ -761,17 +928,23 @@ def _cause_theme(headline: str) -> tuple[str, str]:
 
 def aggregate_candidate_causes(
     candidates: list[dict[str, Any]],
-    max_causes: int = 5,
+    max_causes: int | None = None,
     asset_class: str = "equity",
+    cfg: AttributionConfig | None = None,
 ) -> list[dict[str, Any]]:
     """Group candidate articles into distinct ranked causes with cross-source verification."""
     if not candidates:
         return []
+    cfg = cfg or AttributionConfig()
+    max_n = max_causes if max_causes is not None else cfg.cause_max_n
     pool = candidates
     if asset_class == "equity":
         eq_pool = [c for c in candidates if c.get("relevance", 0) >= 0.40]
         if eq_pool:
             pool = eq_pool
+        aligned = [c for c in pool if not c.get("direction_mismatch")]
+        if aligned:
+            pool = aligned
 
     buckets: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for c in pool:
@@ -826,6 +999,8 @@ def aggregate_candidate_causes(
             "verification_tier_zh": verification_tier_zh(auth["verification_tier"]),
             "article_count": len(items),
             "top_sources": all_srcs[:5],
+            "inferred_direction": rep.get("inferred_direction"),
+            "direction_mismatch": any(it.get("direction_mismatch") for it in items) and all(it.get("direction_mismatch") for it in items),
         })
     causes.sort(
         key=lambda c: (
@@ -833,7 +1008,12 @@ def aggregate_candidate_causes(
         ),
         reverse=True,
     )
-    return causes[:max_causes]
+    return select_by_score_threshold(
+        causes,
+        min_score=cfg.cause_score_min,
+        rel_of_top=cfg.cause_rel_of_top,
+        max_n=max_n,
+    )
 
 
 def is_anomalous_daily(row: dict, cfg: AttributionConfig) -> bool:
@@ -885,9 +1065,14 @@ def _llm_payload(
                 ms.append(f"{k} {v['close']:.3f} ({v['ret_pct']:+.2f}% vs 上日美股收盘)")
         if ms:
             lines.append(f"同会话宏观/利率: {'；'.join(ms)}")
+    if item.get("contrarian"):
+        lines.append(
+            f"逆势标记: 该标的当日方向与共同因子 {item.get('contrarian_dir')}（{','.join((item.get('contrarian_symbols') or [])[:6])}）相反。"
+            "不得把板块同向叙事套用到该标的；仅可使用该标的自身且方向一致的新闻，否则判定 CONTRARIAN 或 NO_CLEAR_NEWS。"
+        )
     if top_causes:
-        lines.append("已聚合去重的候选原因（含独立来源数、权威度与事前/事后标记）:")
-        for i, tc in enumerate(top_causes[:5], 1):
+        lines.append("已聚合去重的候选原因（含独立来源数、权威度与事前/事后标记；已按阈值筛选，须全部纳入摘要）:")
+        for i, tc in enumerate(top_causes, 1):
             doms = ",".join((tc.get("independent_domains") or [])[:4])
             lines.append(
                 f"{i}. [{tc['timing']}] 主题={tc['theme_label_zh']} | 核验={tc['verification_tier']} "
@@ -897,7 +1082,7 @@ def _llm_payload(
     lines.append("原始候选新闻 Top:")
     if not candidates:
         lines.append("（窗口前后未检索到事件簇）")
-    for i, c in enumerate(candidates[:5], 1):
+    for i, c in enumerate(candidates, 1):
         lines.append(
             f"{i}. [{c['timing']}] {c['published_at_myt']} | {c['category']}/{c['subcategory']} | "
             f"核验={c.get('verification_tier')} 权威={c.get('authority_score')} 归因分={c['attr_score']} | {c['headline']}"
@@ -913,8 +1098,24 @@ def _apply_llm(
     session_tape: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     cands = item.get("candidates") or []
-    top = cands[: cfg.llm_top_k]
+    top = select_by_score_threshold(
+        cands,
+        min_score=cfg.cause_score_min,
+        rel_of_top=cfg.cause_rel_of_top,
+        max_n=cfg.cause_max_n,
+    ) or cands[: cfg.llm_top_k]
     top_causes = item.get("top_causes") or []
+    if item.get("contrarian") and not has_symbol_specific_aligned_news(item):
+        sector = "、".join((item.get("contrarian_symbols") or [])[:4]) or "板块共同因子"
+        cdir = item.get("contrarian_dir") or "相反方向"
+        return {
+            "attribution_zh": f"当日逆势于{sector}的{cdir}行情，未找到该标的自身明确且方向一致的新闻，可能为板块轮动/个股分流。",
+            "confidence": 0.45,
+            "verdict": "CONTRARIAN",
+            "llm_status": "SKIPPED_CONTRARIAN_NO_NAME_NEWS",
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+        }
     weak = (not top) or (top[0]["attr_score"] < cfg.attr_score_min)
     if weak:
         return {
@@ -1012,7 +1213,7 @@ def group_common_factors(items: list[dict], cfg: AttributionConfig) -> list[dict
                 for m in members
             ],
             "candidates": shared,
-            "top_causes": aggregate_candidate_causes(shared, max_causes=5, asset_class=cls_kind),
+            "top_causes": aggregate_candidate_causes(shared, asset_class=cls_kind, cfg=cfg),
         }
 
     cryptos = [it for it in items if it["asset_class"] == "crypto"]
@@ -1044,7 +1245,7 @@ def group_common_factors(items: list[dict], cfg: AttributionConfig) -> list[dict
                     if c.get("category") in MACRO_CATS or c.get("share_n", 0) >= 3
                     or any(k in (c.get("headline") or "").lower() for k in ("crypto", "bitcoin", "nasdaq", "stock", "risk", "ai trade", "nvidia"))
                 ][:8]
-                link["top_causes"] = aggregate_candidate_causes(link["candidates"], max_causes=4, asset_class="crypto")
+                link["top_causes"] = aggregate_candidate_causes(link["candidates"], asset_class="crypto", cfg=cfg)
                 groups.append(link)
     return groups
 
@@ -1291,8 +1492,12 @@ def build_day_anomalies(
             }
         pre_h = cfg.us_event_pre_hours if cls == "equity" else cfg.event_pre_hours
         post_h = cfg.us_event_post_hours if cls == "equity" else cfg.event_post_hours
-        cands = score_candidates(events, jump, move_dir, label, cfg, pre_hours=pre_h, post_hours=post_h)
-        top_causes = aggregate_candidate_causes(cands, max_causes=5, asset_class=cls)
+        session_dir = move_dir
+        if daily and daily.get("ret") is not None:
+            session_dir = "UP" if daily["ret"] >= 0 else "DOWN"
+        align_dir = session_dir
+        cands = score_candidates(events, jump, align_dir, label, cfg, pre_hours=pre_h, post_hours=post_h)
+        top_causes = aggregate_candidate_causes(cands, asset_class=cls, cfg=cfg)
         ret_pct = round(daily["ret"] * 100, 3) if daily and daily.get("ret") is not None else None
         item = {
             "id": f"{day.isoformat()}_{label}",
@@ -1308,7 +1513,8 @@ def build_day_anomalies(
             "day_complete": bool(daily["complete"]) if daily else False,
             "start_px": daily.get("start_px") if daily else None,
             "end_px": daily.get("end_px") if daily else None,
-            "move_dir": move_dir,
+            "move_dir": session_dir,
+            "window_dir": move_dir,
             "primary_window": primary,
             "other_windows": windows[1:3],
             "window_cum_ret_pct": primary.get("cum_ret_pct") if primary else ret_pct,
@@ -1392,7 +1598,7 @@ def render_markdown(reports: list[dict], cfg: AttributionConfig) -> str:
                         f"  - 在线核查（`{fc.get('provider')}/{fc.get('model')}`）：**{fc.get('verification_tier')}** ({fc.get('status')}) — {fc.get('summary')} "
                         + (f"[来源: {cits}]" if cits else "")
                     )
-                for tc in (g.get("top_causes") or [])[:4]:
+                for tc in (g.get("top_causes") or []):
                     srcs = " / ".join(f"[{s.get('name')}]({s.get('url')})" for s in (tc.get("top_sources") or [])[:2] if s.get("url"))
                     lines.append(
                         f"  - 候选原因：**{tc['theme_label_zh']}**（{tc['timing']}，归因分 {tc['attr_score']}，**{tc['verification_tier']}**，"
@@ -1431,6 +1637,10 @@ def render_markdown(reports: list[dict], cfg: AttributionConfig) -> str:
             if it.get("verdict") == "NO_CLEAR_NEWS":
                 timing = "无明显新闻"
                 ver = "unverified"
+            if it.get("contrarian") or it.get("verdict") == "CONTRARIAN":
+                cdir = it.get("contrarian_dir") or "板块"
+                timing = f"逆势于{cdir}"
+                ver = "CONTRARIAN / 未套用板块叙事"
             lines.append(f"| {it['symbol']} | {ret_s} / {z_s} | {win} | {attr} | {conf_s} | {timing} | {ver} |")
 
         lines += ["", "### 辅助：新闻中心热榜 Top 10（价格不参与排序）", ""]
@@ -1545,6 +1755,7 @@ def run_hotlist(
     for day in dates:
         items, session_tape, macro_snapshot = build_day_anomalies(day, frames, daily_map, events, cfg, market=market)
         groups = group_common_factors(items, cfg)
+        annotate_contrarian(items, groups)
 
         fc_budget = cfg.max_factchecks_per_day if (verify_online and fact_checker.is_configured) else 0
         fc_targets: list[dict[str, Any]] = []
@@ -1562,7 +1773,10 @@ def run_hotlist(
             sym_str = ",".join(obj.get("symbols") or [obj.get("symbol", "")])
             claim = f"{sym_str} moved {obj.get('move_dir')} on {day.isoformat()} (ET/session); candidate driver: {c0.get('headline')}"
             if len(top_c) > 1:
-                claim += f"; secondary: {top_c[1].get('headline')}"
+                extras = "; ".join(
+                    (c.get("theme_label_zh") or c.get("headline") or "") for c in top_c[1:4]
+                )
+                claim += f"; also: {extras}"
             fc_res = fact_checker.verify_claim(claim, sym_str, session_date=day.isoformat())
             fc_dict = {
                 "status": fc_res.status,
@@ -1628,7 +1842,7 @@ def run_hotlist(
                     obj.update(attr)
                 all_pt += int(attr.get("prompt_tokens") or 0)
                 all_ct += int(attr.get("completion_tokens") or 0)
-                if attr.get("llm_status") not in ("SKIPPED_WEAK_EVIDENCE", "SKIPPED_NO_KEY"):
+                if attr.get("llm_status") not in ("SKIPPED_WEAK_EVIDENCE", "SKIPPED_NO_KEY", "SKIPPED_CONTRARIAN_NO_NAME_NEWS"):
                     llm_calls += 1
         else:
             msg = "未调用 LLM（密钥健康检查未通过）" if not client.is_configured else f"LLM 健康检查失败 HTTP {health_http}"

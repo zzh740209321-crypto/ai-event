@@ -284,10 +284,14 @@ class LiteLLMClient:
             "You are a financial move-attribution assistant. The price move already happened; "
             "do NOT predict future prices. Return strictly ONE JSON object with keys: "
             "attribution_zh (one Chinese sentence), confidence (0.0-1.0), "
-            "verdict (exactly one of ATTRIBUTED, EX_POST_REPORT, NO_CLEAR_NEWS, MIXED). "
+            "verdict (exactly one of ATTRIBUTED, EX_POST_REPORT, NO_CLEAR_NEWS, MIXED, CONTRARIAN). "
             "Rules: only use the provided candidate news and market tape/macro context; never invent facts, numbers, or sources. "
             "Distinguish pre-jump drivers (事前) vs post-jump/close market wraps (事后解释). "
             "If the move is a sector/profit-taking giveback of a prior-session surge while other sectors/Dow rose, state that clearly instead of calling it a broad market crash. "
+            "When summarizing a common factor, mention every provided candidate cause that cleared the score cutoff "
+            "(do not drop secondary drivers such as tariffs just because they are not ranked first). "
+            "If the symbol is marked 逆势/contrarian versus the sector common factor, do NOT apply the sector's same-direction narrative to this name; "
+            "use only name-specific news consistent with this symbol's daily direction, otherwise set verdict to CONTRARIAN or NO_CLEAR_NEWS. "
             "If evidence is weak or only technical/liquidity explanations fit, set verdict to NO_CLEAR_NEWS "
             "and write: 未找到明确新闻，可能为流动性/清算/技术面. Do not force a story."
         )
@@ -304,7 +308,7 @@ class LiteLLMClient:
                         "response_format": {"type": "json_object"},
                         "messages": [
                             {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_payload[:6000]},
+                            {"role": "user", "content": user_payload[:8000]},
                         ],
                     },
                     timeout=(5, 20),
@@ -321,7 +325,7 @@ class LiteLLMClient:
                 raw_c = _strip_json_fence(data["choices"][0]["message"]["content"])
                 parsed = json.loads(raw_c)
                 verdict = str(parsed.get("verdict", "NO_CLEAR_NEWS")).upper()
-                if verdict not in ("ATTRIBUTED", "EX_POST_REPORT", "NO_CLEAR_NEWS", "MIXED"):
+                if verdict not in ("ATTRIBUTED", "EX_POST_REPORT", "NO_CLEAR_NEWS", "MIXED", "CONTRARIAN"):
                     verdict = "NO_CLEAR_NEWS"
                 conf = float(parsed.get("confidence", 0.0))
                 conf = max(0.0, min(1.0, conf))

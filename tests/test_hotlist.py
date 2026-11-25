@@ -8,11 +8,17 @@ import pandas as pd
 from fin_news_events.hotlist import (
     AttributionConfig,
     aggregate_candidate_causes,
+    annotate_contrarian,
     detect_sessions,
     detect_windows,
+    has_symbol_specific_aligned_news,
+    infer_news_direction,
+    is_crypto_credit_noise,
+    is_nonmarket_political,
     news_heat,
     relevance_score,
     score_candidates,
+    select_by_score_threshold,
     verification_label,
 )
 from fin_news_events.llm_clients import PerplexityFactChecker
@@ -195,6 +201,137 @@ class TestHotlist(unittest.TestCase):
             self.assertEqual(r2.verification_tier, "confirmed")
             self.assertEqual(len(r2.citations), 2)
             self.assertAlmostEqual(r2.cost_usd, 0.0051, places=4)
+
+
+    def test_select_by_score_threshold_keeps_near_top(self):
+        items = [
+            {"headline": "unwind", "attr_score": 0.9246},
+            {"headline": "governance", "attr_score": 0.854},
+            {"headline": "ai capex", "attr_score": 0.785},
+            {"headline": "tariffs", "attr_score": 0.7529},
+            {"headline": "weak other", "attr_score": 0.55},
+        ]
+        kept = select_by_score_threshold(items, min_score=0.70, rel_of_top=0.75, max_n=8)
+        heads = [x["headline"] for x in kept]
+        self.assertIn("tariffs", heads)
+        self.assertNotIn("weak other", heads)
+        self.assertEqual(len(kept), 4)
+        # cap
+        many = [{"headline": str(i), "attr_score": 0.90 - i * 0.01} for i in range(12)]
+        self.assertEqual(len(select_by_score_threshold(many, max_n=8)), 8)
+
+    def test_direction_and_contrarian_filtering(self):
+        self.assertEqual(
+            infer_news_direction({"headline": "Nasdaq futures drop as AI stocks cool after Nvidia-fueled rally", "direction": "NEUTRAL"}),
+            "BEARISH",
+        )
+        self.assertEqual(
+            infer_news_direction({"headline": "NVIDIA Board Reinstates Jensen Huang as President, CEO and Board Director", "direction": "BULLISH"}),
+            "BULLISH",
+        )
+        jump = datetime(2026, 11, 24, 22, 30, tzinfo=MYT)
+        bear = {
+            "event_id": "bear",
+            "headline": "Nasdaq futures drop as AI stocks cool after Nvidia-fueled rally",
+            "summary": "chip stocks lower",
+            "category": "TECH_AI",
+            "subcategory": "valuation_capex",
+            "direction": "NEUTRAL",
+            "impact_score": 85,
+            "target_symbol": "NVDA",
+            "retrieval_layer": "CROSS_MARKET",
+            "published_at_utc": (jump - timedelta(hours=1)).astimezone(timezone.utc).isoformat(),
+            "published_at_myt": "2026-11-24 21:30 UTC+8",
+            "source_count": 6,
+            "unique_domains": ["reuters.com", "cnbc.com"],
+            "sources": [{"name": "Reuters", "domain": "reuters.com", "url": "https://reuters.com/1"}],
+            "verification_status": "MULTI_SOURCE_CONFIRMED",
+            "_pub_dt": jump - timedelta(hours=1),
+        }
+        apple_up = dict(bear)
+        apple_up["event_id"] = "aapl-specific"
+        apple_up["headline"] = "Apple shares jump after iPhone upgrade cycle data"
+        apple_up["direction"] = "BULLISH"
+        down_on_down = score_candidates([bear], jump, "DOWN", "NVDA", AttributionConfig())
+        up_on_aapl = score_candidates([bear, apple_up], jump, "UP", "AAPL", AttributionConfig())
+        self.assertFalse(down_on_down[0]["direction_mismatch"])
+        mismatched = next(s for s in up_on_aapl if s["event_id"] == "bear")
+        aligned = next(s for s in up_on_aapl if s["event_id"] == "aapl-specific")
+        self.assertTrue(mismatched["direction_mismatch"])
+        self.assertLess(mismatched["attr_score"], aligned["attr_score"])
+        causes_up = aggregate_candidate_causes(up_on_aapl, asset_class="equity")
+        self.assertTrue(any("Apple" in (c.get("headline") or "") for c in causes_up) or not any(c.get("direction_mismatch") for c in causes_up))
+        # AAPL-like item with only sector-down news should be tagged CONTRARIAN and lack name-specific news
+        aapl_item = {
+            "id": "2026-11-24_AAPL",
+            "date": "2026-11-24",
+            "symbol": "AAPL",
+            "asset_class": "equity",
+            "daily_ret_pct": 1.25,
+            "move_dir": "UP",
+            "candidates": [mismatched],
+            "top_causes": aggregate_candidate_causes([mismatched], asset_class="equity"),
+        }
+        nvda_item = {
+            "id": "2026-11-24_NVDA",
+            "date": "2026-11-24",
+            "symbol": "NVDA",
+            "asset_class": "equity",
+            "daily_ret_pct": -5.94,
+            "move_dir": "DOWN",
+            "magnitude": 5.9,
+        }
+        groups = [{
+            "kind": "equity_common",
+            "date": "2026-11-24",
+            "move_dir": "DOWN",
+            "symbols": ["NVDA", "SMH"],
+            "members": [{"id": nvda_item["id"], "symbol": "NVDA"}],
+        }]
+        annotate_contrarian([aapl_item, nvda_item], groups)
+        self.assertTrue(aapl_item.get("contrarian"))
+        self.assertFalse(has_symbol_specific_aligned_news(aapl_item))
+
+    def test_nonmarket_political_and_crypto_credit_downweighted(self):
+        political = {
+            "headline": "Rep. Jamie Raskin on Howard Lutnick probe: A profound conflict of interest",
+            "summary": "",
+            "category": "POLITICS_REG",
+            "subcategory": "enforcement_lawsuit",
+        }
+        tariffs = {
+            "headline": "US prepares new tariffs on China, EU and other trading partners – WSJ",
+            "summary": "stock market today",
+            "category": "POLITICS_REG",
+            "subcategory": "geopolitics_tariffs",
+        }
+        crypto_credit = {
+            "headline": "Neuberger Berman’s HINC fund brings high-yield credit to Aave’s institutional vaults",
+            "summary": "",
+            "category": "CRYPTO",
+            "subcategory": "major_financing",
+        }
+        self.assertTrue(is_nonmarket_political(political, "NVDA"))
+        self.assertFalse(is_nonmarket_political(tariffs, "NVDA"))
+        self.assertTrue(is_crypto_credit_noise(crypto_credit, "AAPL"))
+        self.assertLessEqual(relevance_score(political, "NVDA"), 0.15)
+        self.assertGreaterEqual(relevance_score(tariffs, "NVDA"), 0.65)
+        self.assertLessEqual(relevance_score(crypto_credit, "AAPL"), 0.15)
+
+    def test_aggregate_threshold_includes_tariffs(self):
+        cands = [
+            {"headline": "Nasdaq futures drop as AI stocks cool after Nvidia-fueled rally", "attr_score": 0.9246, "authority_score": 1.0, "ex_post": False, "hours_vs_jump": -1.0, "published_at_myt": "t1", "relevance": 0.9, "sources": [{"name": "Kitco", "domain": "kitco.com", "url": "https://k/1"}]},
+            {"headline": "Jensen Huang Could Still Be Kicked Out, Nvidia Could Still Fall 40%", "attr_score": 0.854, "authority_score": 1.0, "ex_post": False, "hours_vs_jump": -0.4, "published_at_myt": "t2", "relevance": 0.9, "sources": [{"name": "Yahoo", "domain": "finance.yahoo.com", "url": "https://y/1"}]},
+            {"headline": "Drops for Nvidia, Anthropic and other AI stocks drag the US market back down", "attr_score": 0.785, "authority_score": 0.76, "ex_post": False, "hours_vs_jump": -2.0, "published_at_myt": "t3", "relevance": 0.8, "sources": [{"name": "Yahoo", "domain": "finance.yahoo.com", "url": "https://y/2"}]},
+            {"headline": "US prepares new tariffs on China, EU and other trading partners – WSJ", "attr_score": 0.7529, "authority_score": 0.9, "ex_post": False, "hours_vs_jump": -0.87, "published_at_myt": "t4", "relevance": 0.8, "sources": [{"name": "WSJ", "domain": "wsj.com", "url": "https://wsj.com/1"}]},
+            {"headline": "Rep. Jamie Raskin on Howard Lutnick probe: A profound conflict of interest", "attr_score": 0.20, "authority_score": 0.88, "ex_post": False, "hours_vs_jump": -1.0, "published_at_myt": "t5", "relevance": 0.12, "direction_mismatch": False, "sources": [{"name": "CNBC", "domain": "cnbc.com", "url": "https://cnbc.com/1"}]},
+        ]
+        causes = aggregate_candidate_causes(cands, asset_class="equity")
+        labels = " ".join(c["theme_label_zh"] + " " + (c.get("headline") or "") for c in causes)
+        self.assertGreaterEqual(len(causes), 4)
+        self.assertTrue(any("关税" in (c["theme_label_zh"] or "") for c in causes))
+        self.assertFalse(any("Raskin" in (c.get("headline") or "") for c in causes))
+        self.assertIn("关税", labels)
 
 
 if __name__ == "__main__":
